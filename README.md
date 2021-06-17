@@ -1,6 +1,6 @@
 # C# Prettier Doc
 
-Makes your C# XML docs look just a tad bit nicer.
+A Visual Studio Code extension that makes your C# XML docs look just a tad bit nicer.
 
 ## Features
 
