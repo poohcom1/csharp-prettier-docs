@@ -4,13 +4,16 @@
   "description": "Make C# docs much more pleasant to look at",
   "publisher": "poohcom1",
   "version": "1.2.0",
+  "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"
   },
+  "homepage": "https://github.com/poohcom1/csharp-prettier-docs.git",
   "repository": {
     "type": "git",
     "url": "https://github.com/poohcom1/csharp-prettier-docs.git"
   },
+  "bugs": "https://github.com/poohcom1/csharp-prettier-docs/issues",
   "categories": [
     "Other"
   ],
