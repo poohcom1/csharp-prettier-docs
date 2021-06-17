@@ -16,7 +16,7 @@ Initial Release
 ### 1.1.0
 
 - Doc being edited temporarily disables pretty docs for ease of editing
-- Empty parameters does not show delimiters
+- Empty parameters now no longer show delimiters
 
 ---
 
