@@ -1,5 +1,7 @@
 # C# Prettier Docs
 
+[![](https://vsmarketplacebadge.apphb.com/version-short/poohcom1.csharp-prettier-docs.svg)](https://marketplace.visualstudio.com/items?itemName=poohcom1.csharp-prettier-docs)
+
 A Visual Studio Code extension that makes your C# XML docs look just a tad bit nicer.
 
 ## Features
