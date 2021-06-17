@@ -3,7 +3,7 @@
   "displayName": "C# Prettier Docs",
   "description": "Make C# docs much more pleasant to look at",
   "publisher": "poohcom1",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"
@@ -77,7 +77,7 @@
           },
           "csPrettierDoc.returnPrefix": {
             "type": "string",
-            "default": "➥ ",
+            "default": " ➥ ",
             "description": "Decorative mark placed before the returns line"
           },
           "csPrettierDoc.returnSuffix": {
@@ -145,17 +145,8 @@
     ],
     "colors": [
       {
-        "id": "csPrettierDoc.hintForeground",
-        "description": "Specifies the foreground color for the hints",
-        "defaults": {
-          "dark": "#FFFFFF",
-          "light": "#1a0000",
-          "highContrast": "#FFFFFF"
-        }
-      },
-      {
-        "id": "csPrettierDoc.hintBackground",
-        "description": "Specifies the background color for the hints",
+        "id": "csPrettierDoc.background",
+        "description": "The background color of the decorators",
         "defaults": {
           "dark": "#353947",
           "light": "#FFFFFF",
@@ -164,7 +155,7 @@
       },
       {
         "id": "csPrettierDoc.summary",
-        "description": "Specifies the background color for the hints",
+        "description": "Summary text color",
         "defaults": {
           "dark": "#adccee",
           "light": "#adccee",
@@ -173,7 +164,7 @@
       },
       {
         "id": "csPrettierDoc.param",
-        "description": "Specifies the background color for the hints",
+        "description": "Param text color",
         "defaults": {
           "dark": "#97d47b",
           "light": "#97d47b",
@@ -182,7 +173,7 @@
       },
       {
         "id": "csPrettierDoc.return",
-        "description": "Specifies the background color for the hints",
+        "description": "Returns text color",
         "defaults": {
           "dark": "#ff6262",
           "light": "#ff6262",

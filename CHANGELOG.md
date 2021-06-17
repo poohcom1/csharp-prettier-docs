@@ -4,6 +4,13 @@ All notable changes to the "csharp-prettier-docs" extension will be documented i
 
 ## [Unreleased]
 
+## 1.2.1
+
+### Changed
+
+- Minor changes to configuration descriptions and default values
+- Minor changes to logo
+
 ## 1.2.0
 
 ### Added

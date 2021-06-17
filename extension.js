@@ -85,7 +85,7 @@ function summaryHint(message, range) {
 				opacity: "1.0",
 				color: new vscode.ThemeColor("csPrettierDoc.summary"),
 				contentText: message,
-				backgroundColor: new vscode.ThemeColor("csPrettierDoc.hintBackground"),
+				backgroundColor: new vscode.ThemeColor("csPrettierDoc.background"),
 				margin: `0px 3px 0px 3px;padding: ${config.get("verticalPadding")}px ${config.get(
 					"horizontalPadding"
 				)}px;`,
