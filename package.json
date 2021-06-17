@@ -1,0 +1,157 @@
+{
+  "name": "csharp-prettier-docs",
+  "displayName": "C# Prettier Docs",
+  "description": "Make C# docs much more pleasant to look at",
+  "publisher": "poohcom1",
+  "version": "1.1.0",
+  "engines": {
+    "vscode": "^1.57.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/poohcom1/csharp-prettier-docs"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:csharp",
+    "onCommand:csPrettierDoc.toggle"
+  ],
+  "main": "./extension.js",
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.57.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "csPrettierDoc.toggle",
+        "title": "Toggle pretty docs",
+        "category": "C# Pretty Docs"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "C# Prettier Docs",
+        "properties": {
+          "csPrettierDoc.opacity": {
+            "type": "number",
+            "default": 0.3
+          },
+          "csPrettierDoc.borderRadius": {
+            "type": "number",
+            "default": 5
+          },
+          "csPrettierDoc.fontWeight": {
+            "type": "number",
+            "default": 500,
+            "enum": [
+              100,
+              200,
+              300,
+              400,
+              500,
+              600,
+              700,
+              800,
+              900
+            ],
+            "description": "Hints styling of font-weight CSS property"
+          },
+          "csPrettierDoc.fontStyle": {
+            "type": "string",
+            "default": "italic",
+            "enum": [
+              "normal",
+              "italic"
+            ],
+            "description": "Hints styling of font-style CSS property"
+          },
+          "csPrettierDoc.margin": {
+            "type": "number",
+            "default": 2,
+            "description": "Hints styling of margin CSS property"
+          },
+          "csPrettierDoc.verticalPadding": {
+            "type": "number",
+            "default": 1,
+            "description": "Top and bottom padding of the hints"
+          },
+          "csPrettierDoc.horizontalPadding": {
+            "type": "number",
+            "default": 4,
+            "description": "Right and left padding of the hints"
+          },
+          "csPrettierDoc.fontSize": {
+            "type": "number",
+            "default": 13,
+            "description": "Hints styling of font size CSS property"
+          }
+        }
+      }
+    ],
+    "colors": [
+      {
+        "id": "csPrettierDoc.hintForeground",
+        "description": "Specifies the foreground color for the hints",
+        "defaults": {
+          "dark": "#FFFFFF",
+          "light": "#1a0000",
+          "highContrast": "#FFFFFF"
+        }
+      },
+      {
+        "id": "csPrettierDoc.hintBackground",
+        "description": "Specifies the background color for the hints",
+        "defaults": {
+          "dark": "#353947",
+          "light": "#FFFFFF",
+          "highContrast": "#353947"
+        }
+      },
+      {
+        "id": "csPrettierDoc.summary",
+        "description": "Specifies the background color for the hints",
+        "defaults": {
+          "dark": "#adccee",
+          "light": "#adccee",
+          "highContrast": "#adccee"
+        }
+      },
+      {
+        "id": "csPrettierDoc.param",
+        "description": "Specifies the background color for the hints",
+        "defaults": {
+          "dark": "#97d47b",
+          "light": "#97d47b",
+          "highContrast": "#97d47b"
+        }
+      },
+      {
+        "id": "csPrettierDoc.return",
+        "description": "Specifies the background color for the hints",
+        "defaults": {
+          "dark": "#ff6262",
+          "light": "#ff6262",
+          "highContrast": "#ff6262"
+        }
+      }
+    ]
+  },
+  "dependencies": {
+    "jsdom": "^16.6.0"
+  }
+}
