@@ -13,6 +13,9 @@ function print(message) {
 
 let config = vscode.workspace.getConfiguration("csPrettierDoc");
 
+// For disabling with the toggle command
+let enabled = true;
+
 function activate(context) {
 	const getActiveEditor = () => vscode.window.activeTextEditor;
 
@@ -52,12 +55,13 @@ function activate(context) {
 		decorate(getActiveEditor());
 	})
 
+	// Add toggle command
 	context.subscriptions.push(
 		vscode.commands.registerCommand("csPrettierDoc.toggle", () => {
 			enabled = !enabled;
 
 			if (!enabled) {
-				getActiveEditor().setDecorations(decorationType, [])
+				getActiveEditor().setDecorations(decorationType, []) // Remove decorations
 			} else {
 				decorate(getActiveEditor())
 			}

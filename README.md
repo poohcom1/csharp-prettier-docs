@@ -9,14 +9,18 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 - Use the Toggle command to quickly enable/disable the extension.
 - Edit the look and feel of the docs through various settings.
 
-### 1.0.0
+### 1.2.0
 
-Initial Release
+- Configurations for decorator prefixes and suffixes
 
 ### 1.1.0
 
 - Doc being edited temporarily disables pretty docs for ease of editing
 - Empty parameters now no longer show delimiters
+
+### 1.0.0
+
+Initial Release
 
 ---
 
