@@ -1,23 +1,22 @@
 const vscode = require("vscode")
 const JSDOM = require("jsdom");
 
-//Create output channel
+// Debugging print
 const debug = vscode.window.createOutputChannel("CS Prettier Debug");
-
-const DEBUG = true;
+const DEBUG_MODE = false;
 
 function print(message) {
-	if (!DEBUG) return;
-	//Write to output.
+	if (!DEBUG_MODE) return;
+
 	debug.appendLine(message);
 }
 
-let enabled = true;
+let config = vscode.workspace.getConfiguration("csPrettierDoc");
 
 function activate(context) {
-
 	const getActiveEditor = () => vscode.window.activeTextEditor;
 
+	// When switching documents
 	vscode.window.onDidChangeActiveTextEditor(editor => {
 		if (!enabled) {
 			editor.setDecorations(decorationType, [])
@@ -27,6 +26,7 @@ function activate(context) {
 		decorate(editor);
 	})
 
+	// When moving the cursor and highlighting
 	vscode.window.onDidChangeTextEditorSelection(editor => {
 		if (!enabled) {
 			editor.setDecorations(decorationType, [])
@@ -36,6 +36,7 @@ function activate(context) {
 		decorate(getActiveEditor());
 	})
 
+	// When editing text
 	vscode.workspace.onDidChangeTextDocument((event) => {
 		const openEditor = vscode.window.visibleTextEditors.filter(
 			(editor) => editor.document.uri === event.document.uri
@@ -44,7 +45,12 @@ function activate(context) {
 		decorate(openEditor);
 	});
 
+	// When configurations updated
+	vscode.workspace.onDidChangeConfiguration(() => {
+		config = vscode.workspace.getConfiguration("csPrettierDoc");
 
+		decorate(getActiveEditor());
+	})
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("csPrettierDoc.toggle", () => {
@@ -62,9 +68,6 @@ function activate(context) {
 
 	decorate(getActiveEditor());
 }
-
-const config = vscode.workspace.getConfiguration("csPrettierDoc");
-
 
 const decorationType = vscode.window.createTextEditorDecorationType({
 	opacity: `${config.get("opacity")}`,
@@ -133,51 +136,61 @@ function decorate(editor) {
 
 
 function matchTags(sourceCodeArr, decorationsArray) {
-	// Create empty DOM, the imput param here is for HTML not XML, and we don want to parse HTML
 	const dom = new JSDOM.JSDOM("");
-	// Get DOMParser, same API as in browser
 	const DOMParser = dom.window.DOMParser;
 	const parser = new DOMParser;
 
-	const regex = /(?<=\/\/\/ +)(.*)/
+	// For lines beginning with triple backslashes
+	const commentRegex = /(?<=\/\/\/ +)(.*)/
+	// For summary tag
 	const summaryReg = /(< *summary)/
+	// For summary ending tag
 	const summaryEndReg = /(<\/summary)/
+	// For param tag
 	const paramReg = /(< *param)/
+	// For return tag
 	const returnReg = /(< *returns)/
 
+	// String for the comment xml
 	let docXml = "";
 
+	// Line numbers for the tags
 	let summaryLine = -1;
 	let summaryEndLine = -1;
 	let paramLines = [];
 	let returnLine = -1;
 
+	// Use to skip the current doc xml chunk when a cursor is found
 	let skipCurrent = false;
 
+	// TextEditor.selection object for the cursor
+	let cursorLine = null;
+
+	// The amount of indent for the doc xml chunk
 	let indent = 0;
 
-	let cursorLine = null;
 
 	// current editor
 	const editor = vscode.window.activeTextEditor;
 
-	// check if there is no selection
+	// Get cursor position
 	if (editor.selection.isEmpty) {
-		// the Position object gives you the line and character where the cursor is
 		cursorLine = editor.selection.active;
-		print(cursorLine.line)
 	}
 
+	// Loop through entire code
 	for (let line = 0; line < sourceCodeArr.length; line++) {
 		const currentLine = sourceCodeArr[line]
-		const match = currentLine.match(regex);
+		const match = currentLine.match(commentRegex); // Match triple backslash comments
 
+		// If there's a match for comment, add comment to docXml and store other values
 		if (match) {
 			//print(match[0])
-			docXml += match[0];
+			docXml += match[0]; // Add comment (without the triple backslash) to the docXml string
 
-			indent = currentLine.match(/(\/\/\/)/).index;
+			indent = currentLine.match(/(\/\/\/)/).index; // Set indent based on index of the triple backslash
 
+			// Store index of tag lines
 			if (currentLine.match(summaryReg))
 				summaryLine = line;
 			else if (currentLine.match(summaryEndReg))
@@ -187,17 +200,24 @@ function matchTags(sourceCodeArr, decorationsArray) {
 			else if (currentLine.match(returnReg))
 				returnLine = line;
 
+			// If cursor is within line,  raise skipCurrent flag to skip the decoration
 			if (cursorLine.line === line) skipCurrent = true;
+
 		} else if (docXml !== "") {
+			// If there's no match and docXml has values, xml chunk end has been reached
+
+			// Skip when skipCurrent flag is raised
 			if (skipCurrent) {
 				docXml = ""
 				paramLines = []
 				skipCurrent = false;
 				continue;
 			}
-			// Create document by parsing XML
+
+			// Create document by parsing XML. Added root tags to make the xml document valid
 			const document = parser.parseFromString("<root>" + docXml + "</root>", "text/xml");
 
+			// Parse document for rags
 			const summaryElements = document.getElementsByTagName("summary")
 			const paramElements = document.getElementsByTagName("param")
 			const returnElements = document.getElementsByTagName("returns")
@@ -205,6 +225,7 @@ function matchTags(sourceCodeArr, decorationsArray) {
 			if (summaryLine !== -1) {
 				const summaryText = summaryElements[0].textContent;
 
+				// Clear the lines until the last line
 				decorationsArray.push({
 					range: new vscode.Range(
 						new vscode.Position(summaryLine + 0, 0),
@@ -212,22 +233,19 @@ function matchTags(sourceCodeArr, decorationsArray) {
 					)
 				})
 
-				decorationsArray.push(summaryHint("═══ " + summaryText + " ═══", new vscode.Range(
+				decorationsArray.push(summaryHint(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"), new vscode.Range(
 					new vscode.Position(summaryEndLine, indent),
 					new vscode.Position(summaryEndLine + 1, 0)
 				)))
-			} else {
-				// If no match is found, no need to skip because the cursor can't possibly be on an XML doc
-				skipCurrent = false;
 			}
 
 			paramLines.forEach((l, i) => {
 				const paramElement = paramElements[i];
 
-				let paramText = " │ " + paramElement.getAttribute("name");
+				let paramText = config.get("paramPrefix") + paramElement.getAttribute("name");
 
 				if (paramElement.textContent !== "") {
-					paramText += " -- " + paramElement.textContent + " - ";
+					paramText += config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
 				}
 
 				decorationsArray.push(paramHint(paramText, new vscode.Range(
@@ -237,7 +255,7 @@ function matchTags(sourceCodeArr, decorationsArray) {
 			})
 
 			if (returnLine !== -1) {
-				const returnText = " ➥ " + returnElements[0].textContent;
+				const returnText = config.get("returnPrefix") + returnElements[0].textContent + config.get("returnSuffix");
 
 				decorationsArray.push(paramHint(returnText, new vscode.Range(
 					new vscode.Position(returnLine, indent),
@@ -245,101 +263,16 @@ function matchTags(sourceCodeArr, decorationsArray) {
 				), new vscode.ThemeColor("csPrettierDoc.return")))
 			}
 
+			// Reset values
 			docXml = ""
 			paramLines = []
+		} else {
+			// If no match is found, no need to skip because the cursor can't possibly be on an XML doc
+			skipCurrent = false;
 		}
 	}
 }
 
-function matchSummary(sourceCodeArr, decorationsArray) {
-	const tagBegin = /(<.*summary.*>)/;
-	const paramValueRegex = /(?<=\<param.*\>)/
-
-	for (let line = 0; line < sourceCodeArr.length; line++) {
-		let paramMatch = sourceCodeArr[line].match(tagBegin);
-
-		if (paramMatch !== null && paramMatch.index !== undefined) {
-			let range = new vscode.Range(
-				new vscode.Position(line, 0),
-				new vscode.Position(line + 1, 0)
-			);
-
-			let decoration = paramHint("", range);
-
-			decorationsArray.push(decoration);
-		}
-	}
-}
-
-function matchParams(sourceCodeArr, decorationsArray) {
-	const startIndex = /(\/\/\/.*)/;
-
-	const paramValueRegex = /(?<=\<param.*\>)(.*)(?=\<\/param\>)/;
-	const paramValueRegexB = /(?<=\<param.*\>)(.*)/;
-	const paramValueRegexE = /(.*)(?=\<\/param\>)/;
-
-	const paramKeyRegex = /(?<=name=\")(.*)(?=\")/;
-
-	for (let line = 0; line < sourceCodeArr.length; line++) {
-		let lineIndex = sourceCodeArr[line].match(startIndex);
-		let keyMatch = sourceCodeArr[line].match(paramKeyRegex);
-
-		let paramMatch = sourceCodeArr[line].match(paramValueRegex);
-		let paramMatchB = sourceCodeArr[line].match(paramValueRegexB);
-		let paramMatchE = sourceCodeArr[line].match(paramValueRegexE);
-
-		let decoration = null;
-
-		if (paramMatch !== null && lineIndex.index !== undefined) {
-			let range = new vscode.Range(
-				new vscode.Position(line, lineIndex.index),
-				new vscode.Position(line + 1, 0)
-			);
-
-			decoration = paramHint("[" + keyMatch[0] + "] " + paramMatch[0], range, new vscode.ThemeColor("csPrettierDoc.param"));
-		} else if (paramMatchB !== null && lineIndex.index !== undefined) {
-			let range = new vscode.Range(
-				new vscode.Position(line, lineIndex.index),
-				new vscode.Position(line + 1, 0)
-			);
-
-			decoration = paramHint("[" + keyMatch[0] + "] " + paramMatchB[0], range, new vscode.ThemeColor("csPrettierDoc.param"));
-		} else if (paramMatchE !== null && lineIndex.index !== undefined) {
-			let range = new vscode.Range(
-				new vscode.Position(line, lineIndex.index),
-				new vscode.Position(line + 1, 0)
-			);
-
-			decoration = paramHint(" " + paramMatchE[0], range, new vscode.ThemeColor("csPrettierDoc.param"));
-		}
-
-		if (decoration)
-			decorationsArray.push(decoration);
-	}
-}
-
-function matchReturns(sourceCodeArr, decorationsArray) {
-	const startIndex = /(\/\/\/.*)/;
-	const returnValueRegex = /(?<=\<returns.*\>)(.*)(?=\<\/returns\>)/;
-	const returnRegex = /(?<=\<returns\>)(.*)(?=\<\/returns\>)/;
-
-	for (let line = 0; line < sourceCodeArr.length; line++) {
-		let lineIndex = sourceCodeArr[line].match(startIndex);
-		let returnMatch = sourceCodeArr[line].match(returnRegex);
-		let valueMatch = sourceCodeArr[line].match(returnValueRegex);
-
-		if (returnMatch !== null && returnMatch.index !== undefined) {
-			let range = new vscode.Range(
-				new vscode.Position(line, lineIndex.index),
-				new vscode.Position(line + 1, 0)
-			);
-
-			let decoration = paramHint("  ⇒ " + valueMatch[0], range, new vscode.ThemeColor("csPrettierDoc.return"));
-
-			decorationsArray.push(decoration);
-		}
-	}
-}
 
 // this method is called when your extension is deactivated
 function deactivate() { }

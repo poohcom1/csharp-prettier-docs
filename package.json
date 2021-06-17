@@ -47,13 +47,50 @@
       {
         "title": "C# Prettier Docs",
         "properties": {
+          "csPrettierDoc.summaryPrefix": {
+            "type": "string",
+            "default": "═══ ",
+            "description": "Decorative mark placed before the summary line"
+          },
+          "csPrettierDoc.summarySuffix": {
+            "type": "string",
+            "default": " ═══",
+            "description": "Decorative mark placed after the summary line"
+          },
+          "csPrettierDoc.paramPrefix": {
+            "type": "string",
+            "default": " │ ",
+            "description": "Decorative mark placed before the param line"
+          },
+          "csPrettierDoc.paramDelimiter": {
+            "type": "string",
+            "default": " -- ",
+            "description": "Decorative mark placed between the parameter name and description"
+          },
+          "csPrettierDoc.paramSuffix": {
+            "type": "string",
+            "default": " -",
+            "description": "Decorative mark placed after the param line"
+          },
+          "csPrettierDoc.returnPrefix": {
+            "type": "string",
+            "default": "➥",
+            "description": "Decorative mark placed before the returns line"
+          },
+          "csPrettierDoc.returnSuffix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed after the returns line"
+          },
           "csPrettierDoc.opacity": {
             "type": "number",
-            "default": 0.3
+            "default": 0.3,
+            "description": "Opacity of the actual doc comment"
           },
           "csPrettierDoc.borderRadius": {
             "type": "number",
-            "default": 5
+            "default": 5,
+            "description": "Border radius of the background card"
           },
           "csPrettierDoc.fontWeight": {
             "type": "number",
