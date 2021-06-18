@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.3.1
+
+### Changed
+
+- "Description prefix/suffix" renamed to "Text prefix/suffix" in param configurations.
+
+### Fixed
+
+- Text background color not showing
+
 ## 1.3.0
 
 ### Changed
