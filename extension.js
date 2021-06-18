@@ -291,7 +291,7 @@ const decorationType = vscode.window.createTextEditorDecorationType({
  * @returns
  */
 function getDecorator(message, range, configurationType) {
-	const decoratorConfig = vscode.workspace.getConfiguration(configurationType)
+	const decoratorConfig = vscode.workspace.getConfiguration("csharp-prettier-docs." + configurationType)
 
 	const color = new vscode.ThemeColor(`csPrettierDoc.${configurationType}`);
 	const weight = decoratorConfig.get("style.fontWeight");
@@ -309,7 +309,7 @@ function getDecorator(message, range, configurationType) {
 					"horizontalPadding"
 				)}px;`,
 				borderRadius: `${configGeneral.get("borderRadius")}px`,
-				fontWeight: weight + `; font-size: ${fontSize} px;`,
+				fontWeight: weight + `; font-size: ${fontSize}px;`,
 				fontStyle: style
 			},
 		},

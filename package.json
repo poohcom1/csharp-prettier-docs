@@ -89,7 +89,7 @@
           },
           "csharp-prettier-docs.param.markers.lineSuffix": {
             "type": "string",
-            "default": " - ",
+            "default": "",
             "description": "Decorative mark placed after the param line"
           },
           "csharp-prettier-docs.returns.markers.linePrefix": {
@@ -114,12 +114,12 @@
           },
           "csharp-prettier-docs.param.style.fontSize": {
             "type": "number",
-            "default": 13,
+            "default": 14,
             "description": "Font size for the params decorator"
           },
           "csharp-prettier-docs.returns.style.fontSize": {
             "type": "number",
-            "default": 13,
+            "default": 14,
             "description": "Font size for the returns decorator"
           },
           "csharp-prettier-docs.summary.style.fontWeight": {
@@ -225,9 +225,9 @@
         "id": "csPrettierDoc.background",
         "description": "The background color of the markers",
         "defaults": {
-          "dark": "#353947",
+          "dark": "#23252e",
           "light": "#ebebeb",
-          "highContrast": "#353947"
+          "highContrast": "#14161b"
         }
       },
       {
@@ -236,7 +236,7 @@
         "defaults": {
           "dark": "#adccee",
           "light": "#085db8",
-          "highContrast": "#adccee"
+          "highContrast": "#b9d8fa"
         }
       },
       {
@@ -245,7 +245,7 @@
         "defaults": {
           "dark": "#97d47b",
           "light": "#3b9c0d",
-          "highContrast": "#97d47b"
+          "highContrast": "#aaeb8b"
         }
       },
       {
@@ -254,7 +254,7 @@
         "defaults": {
           "dark": "#ff6262",
           "light": "#920d0d",
-          "highContrast": "#ff6262"
+          "highContrast": "#f08787"
         }
       }
     ]

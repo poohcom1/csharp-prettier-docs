@@ -9,6 +9,7 @@
 ### Fixed
 
 - Text background color not showing
+- Text styles not working
 
 ## 1.3.0
 
