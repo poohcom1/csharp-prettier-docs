@@ -4,6 +4,12 @@ All notable changes to the "csharp-prettier-docs" extension will be documented i
 
 ## [Unreleased]
 
+## 1.2.2
+
+## Fixed
+
+- Bad XML causing parsing errors when toggling
+
 ## 1.2.1
 
 ### Changed
