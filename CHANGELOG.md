@@ -2,7 +2,11 @@
 
 All notable changes to the "csharp-prettier-docs" extension will be documented in this file.
 
-## [Unreleased]
+## 1.2.3
+
+### Fixed
+
+- Hotfix: Extension failing due to broken .vscodeignore file
 
 ## 1.2.2
 

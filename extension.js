@@ -1,16 +1,6 @@
 const vscode = require("vscode")
 const JSDOM = require("jsdom");
 
-// Debugging print
-const debug = vscode.window.createOutputChannel("CS Prettier Debug");
-const DEBUG_MODE = false;
-
-function print(message) {
-	if (!DEBUG_MODE) return;
-
-	debug.appendLine(message);
-}
-
 // Get the config
 let config = vscode.workspace.getConfiguration("csPrettierDoc");
 

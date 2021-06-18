@@ -12,7 +12,6 @@ function sleep(ms) {
 suite('C# prettier docs', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
-
 	test('should perform no decorations when there are no docs', () => {
 		const sourceCodeArr = ["test", "test"];
 		const decoratorOptions = [];
