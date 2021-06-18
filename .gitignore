@@ -9,3 +9,8 @@ node_modules
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+### Utils
+
+config.md
+package-json-parse.js

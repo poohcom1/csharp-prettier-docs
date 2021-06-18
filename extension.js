@@ -2,7 +2,20 @@ const vscode = require("vscode")
 const JSDOM = require("jsdom");
 
 // Get the config
-let config = vscode.workspace.getConfiguration("csPrettierDoc");
+let configGeneral;
+let configSummary;
+let configParam;
+let configReturns;
+
+function getConfigs() {
+	configGeneral = vscode.workspace.getConfiguration("csharp-prettier-docs.general");
+	configSummary = vscode.workspace.getConfiguration("csharp-prettier-docs.summary");
+	configParam = vscode.workspace.getConfiguration("csharp-prettier-docs.param");
+	configReturns = vscode.workspace.getConfiguration("csharp-prettier-docs.returns");
+}
+
+getConfigs();
+
 
 // For disabling with the toggle command
 let enabled = true;
@@ -46,7 +59,7 @@ function activate(context) {
 
 	// When configurations updated
 	vscode.workspace.onDidChangeConfiguration(() => {
-		config = vscode.workspace.getConfiguration("csPrettierDoc");
+		getConfigs();
 
 		if (!enabled) {
 			getActiveEditor().setDecorations(decorationType, [])
@@ -215,8 +228,9 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine, 0));
 
 					decorationsArray.push(
-						getSummaryDecorator(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"),
-							getRange(summaryEndLine, indent, summaryEndLine + 1, 0)
+						getDecorator(configSummary.get("decorators.linePrefix") + summaryText + configSummary.get("decorators.lineSuffix"),
+							getRange(summaryEndLine, indent, summaryEndLine + 1, 0),
+							"summary"
 						)
 					)
 				}
@@ -226,21 +240,25 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					if (!paramElement) return;
 
-					const paramPrefix = config.get("paramPrefix") + paramElement.getAttribute("name");
+					const paramPrefix = configParam.get("decorators.linePrefix");
 
-					const paramText = config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
+					const paramName = configParam.get("decorators.namePrefix") + paramElement.getAttribute("name") + configParam.get("decorators.nameSuffix");
 
-					decorationsArray.push(getDecorator(paramPrefix + paramText,
-						getRange(l, indent, l + 1, 0),
-						new vscode.ThemeColor("csPrettierDoc.param"),
-						500,
-						"normal"))
+					let paramDescription = "";
+
+					if (paramElement.textContent.trim() != "") {
+						paramDescription += configParam.get("decorators.delimiter") + configParam.get("decorators.descriptionPrefix") + paramElement.textContent + configParam.get("decorators.descriptionSuffix")
+					}
+
+					const paramSuffix = configParam.get("decorators.lineSuffix");
+
+					decorationsArray.push(getDecorator(paramPrefix + paramName + paramDescription + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
 				})
 
 				if (returnLine !== -1 && returnElements[0]) {
-					const returnText = config.get("returnPrefix") + returnElements[0].textContent + config.get("returnSuffix");
+					const returnText = configReturns.get("decorators.linePrefix") + returnElements[0].textContent + configReturns.get("decorators.lineSuffix");
 
-					decorationsArray.push(getDecorator(returnText, getRange(returnLine, indent, returnLine + 1, 0), new vscode.ThemeColor("csPrettierDoc.return")))
+					decorationsArray.push(getDecorator(returnText, getRange(returnLine, indent, returnLine + 1, 0), "returns"))
 				}
 			} catch (err) {
 				console.log(err)
@@ -261,46 +279,24 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
  * Decorator for the actual comments to hide them
  */
 const decorationType = vscode.window.createTextEditorDecorationType({
-	opacity: `${config.get("opacity")}`,
+	opacity: `${configGeneral.get("opacity")}`,
 });
 
-
-/**
- * Generates the decorator for summaries
- * @param {string} message 
- * @param {vscode.Range} range 
- * @returns 
- */
-function getSummaryDecorator(message, range) {
-	return {
-		range,
-		renderOptions: {
-			before: {
-				opacity: "1.0",
-				color: new vscode.ThemeColor("csPrettierDoc.summary"),
-				contentText: message,
-				backgroundColor: new vscode.ThemeColor("csPrettierDoc.background"),
-				margin: `0px 3px 0px 3px;padding: ${config.get("verticalPadding")}px ${config.get(
-					"horizontalPadding"
-				)}px;`,
-				borderRadius: `${config.get("borderRadius")}px`,
-				fontWeight: 500 + `; font- size: ${config.get("fontSize") + 2} px;`,
-				fontStyle: "normal"
-			},
-		},
-	};
-}
 
 /**
  * Generates the decorator for params and returns
  * @param {string} message
  * @param {vscode.Range} range
+ * @param {string} configurationType
  * @returns
  */
-function getDecorator(message, range, color = "#449944",
-	weight = `${config.get("fontWeight")}`,
-	style = `${config.get("fontStyle")}`,
-	fontSize = `${config.get("fontSize")}`) {
+function getDecorator(message, range, configurationType) {
+	const decoratorConfig = vscode.workspace.getConfiguration(configurationType)
+
+	const color = new vscode.ThemeColor(`csPrettierDoc.${configurationType}`);
+	const weight = decoratorConfig.get("style.fontWeight");
+	const style = decoratorConfig.get("style.fontStyle");
+	const fontSize = decoratorConfig.get("style.fontSize");
 	return {
 		range,
 		renderOptions: {
@@ -309,16 +305,18 @@ function getDecorator(message, range, color = "#449944",
 				color: color,
 				contentText: message,
 				backgroundColor: new vscode.ThemeColor("csPrettierDoc.hintBackground"),
-				margin: `0px 3px 0px 3px;padding: ${config.get("verticalPadding")}px ${config.get(
+				margin: `0px 3px 0px 3px;padding: ${configGeneral.get("verticalPadding")}px ${configGeneral.get(
 					"horizontalPadding"
 				)}px;`,
-				borderRadius: `${config.get("borderRadius")}px`,
-				fontWeight: weight + `; font- size: ${fontSize} px;`,
+				borderRadius: `${configGeneral.get("borderRadius")}px`,
+				fontWeight: weight + `; font-size: ${fontSize} px;`,
 				fontStyle: style
 			},
 		},
 	};
 }
+
+
 
 
 

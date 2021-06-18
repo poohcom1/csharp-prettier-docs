@@ -3,7 +3,7 @@
   "displayName": "C# Prettier Docs",
   "description": "Make C#'s XML documentations much more pleasant to look at.",
   "publisher": "poohcom1",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"
@@ -47,52 +47,98 @@
       {
         "title": "C# Prettier Docs",
         "properties": {
-          "csPrettierDoc.summaryPrefix": {
+          "csharp-prettier-docs.summary.decorators.linePrefix": {
             "type": "string",
             "default": "═══ ",
             "description": "Decorative mark placed before the summary line"
           },
-          "csPrettierDoc.summarySuffix": {
+          "csharp-prettier-docs.summary.decorators.lineSuffix": {
             "type": "string",
             "default": " ═══",
             "description": "Decorative mark placed after the summary line"
           },
-          "csPrettierDoc.paramPrefix": {
+          "csharp-prettier-docs.param.decorators.namePrefix": {
+            "type": "string",
+            "default": " {",
+            "description": "Decorative mark placed before the param name"
+          },
+          "csharp-prettier-docs.param.decorators.nameSuffix": {
+            "type": "string",
+            "default": "}",
+            "description": "Decorative mark placed after the param name"
+          },
+          "csharp-prettier-docs.param.decorators.descriptionPrefix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed before the param description"
+          },
+          "csharp-prettier-docs.param.decorators.descriptionSuffix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed after the param description"
+          },
+          "csharp-prettier-docs.param.decorators.linePrefix": {
             "type": "string",
             "default": " │ ",
             "description": "Decorative mark placed before the param line"
           },
-          "csPrettierDoc.paramDelimiter": {
+          "csharp-prettier-docs.param.decorators.delimiter": {
             "type": "string",
-            "default": " -- ",
+            "default": " ",
             "description": "Decorative mark placed between the parameter name and description"
           },
-          "csPrettierDoc.paramSuffix": {
+          "csharp-prettier-docs.param.decorators.lineSuffix": {
             "type": "string",
-            "default": " -",
+            "default": "",
             "description": "Decorative mark placed after the param line"
           },
-          "csPrettierDoc.returnPrefix": {
+          "csharp-prettier-docs.returns.decorators.linePrefix": {
             "type": "string",
             "default": " ➥ ",
             "description": "Decorative mark placed before the returns line"
           },
-          "csPrettierDoc.returnSuffix": {
+          "csharp-prettier-docs.returns.decorators.lineSuffix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed after the returns line"
           },
-          "csPrettierDoc.opacity": {
+          "csharp-prettier-docs.general.opacity": {
             "type": "number",
             "default": 0.3,
             "description": "Opacity of the actual doc comment"
           },
-          "csPrettierDoc.borderRadius": {
+          "csharp-prettier-docs.summary.style.fontSize": {
             "type": "number",
-            "default": 5,
-            "description": "Border radius of the background card"
+            "default": 15,
+            "description": "Font size for the summary decorator"
           },
-          "csPrettierDoc.fontWeight": {
+          "csharp-prettier-docs.param.style.fontSize": {
+            "type": "number",
+            "default": 13,
+            "description": "Font size for the params decorator"
+          },
+          "csharp-prettier-docs.returns.style.fontSize": {
+            "type": "number",
+            "default": 13,
+            "description": "Font size for the returns decorator"
+          },
+          "csharp-prettier-docs.summary.style.fontWeight": {
+            "type": "number",
+            "default": 600,
+            "enum": [
+              100,
+              200,
+              300,
+              400,
+              500,
+              600,
+              700,
+              800,
+              900
+            ],
+            "description": "Font weight for the summary decorator"
+          },
+          "csharp-prettier-docs.param.style.fontWeight": {
             "type": "number",
             "default": 500,
             "enum": [
@@ -106,36 +152,70 @@
               800,
               900
             ],
-            "description": "Hints styling of font-weight CSS property"
+            "description": "Font weight for the params decorator"
           },
-          "csPrettierDoc.fontStyle": {
+          "csharp-prettier-docs.returns.style.fontWeight": {
+            "type": "number",
+            "default": 500,
+            "enum": [
+              100,
+              200,
+              300,
+              400,
+              500,
+              600,
+              700,
+              800,
+              900
+            ],
+            "description": "Font weight for the returns decorator"
+          },
+          "csharp-prettier-docs.summary.style.fontStyle": {
+            "type": "string",
+            "default": "normal",
+            "enum": [
+              "normal",
+              "italic"
+            ],
+            "description": "Font style for summary decorator"
+          },
+          "csharp-prettier-docs.param.style.fontStyle": {
+            "type": "string",
+            "default": "normal",
+            "enum": [
+              "normal",
+              "italic"
+            ],
+            "description": "Font style for param decorator"
+          },
+          "csharp-prettier-docs.returns.style.fontStyle": {
             "type": "string",
             "default": "italic",
             "enum": [
               "normal",
               "italic"
             ],
-            "description": "Hints styling of font-style CSS property"
+            "description": "Font style for return decorator"
           },
-          "csPrettierDoc.margin": {
+          "csharp-prettier-docs.general.borderRadius": {
+            "type": "number",
+            "default": 5,
+            "description": "Border radius of the background card"
+          },
+          "csharp-prettier-docs.general.margin": {
             "type": "number",
             "default": 2,
-            "description": "Hints styling of margin CSS property"
+            "description": "Marins for the background card"
           },
-          "csPrettierDoc.verticalPadding": {
+          "csharp-prettier-docs.general.verticalPadding": {
             "type": "number",
             "default": 1,
-            "description": "Top and bottom padding of the hints"
+            "description": "Top and bottom padding of the background card"
           },
-          "csPrettierDoc.horizontalPadding": {
+          "csharp-prettier-docs.general.horizontalPadding": {
             "type": "number",
             "default": 4,
-            "description": "Right and left padding of the hints"
-          },
-          "csPrettierDoc.fontSize": {
-            "type": "number",
-            "default": 13,
-            "description": "Hints styling of font size CSS property"
+            "description": "Right and left padding of the background card"
           }
         }
       }
@@ -169,7 +249,7 @@
         }
       },
       {
-        "id": "csPrettierDoc.return",
+        "id": "csPrettierDoc.returns",
         "description": "Returns text color",
         "defaults": {
           "dark": "#ff6262",

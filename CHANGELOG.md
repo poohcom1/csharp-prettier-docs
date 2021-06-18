@@ -1,6 +1,10 @@
 # Change Log
 
-All notable changes to the "csharp-prettier-docs" extension will be documented in this file.
+## 1.3.0
+
+### Changed
+
+- Configurations overhauled, with better organization and some new options
 
 ## 1.2.3
 
