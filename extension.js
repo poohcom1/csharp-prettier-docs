@@ -74,13 +74,6 @@ function activate(context) {
 	decorate(getActiveEditor());
 }
 
-/**
- * Decorator for the actual comments to hide them
- */
-const decorationType = vscode.window.createTextEditorDecorationType({
-	opacity: `${config.get("opacity")}`,
-});
-
 
 /**
  * Decorates the C# docs in the given editors
@@ -93,9 +86,15 @@ function decorate(editor) {
 
 	const sourceCodeArr = sourceCode.split("\n");
 
+	// Get cursor position
+	let cursorPosition = null;
+	if (editor && editor.selection.isEmpty) {
+		cursorPosition = editor.selection.active;
+	}
+
 	let decorationsArray = [];
 
-	decorateSourceCode(sourceCodeArr, decorationsArray);
+	decorateSourceCode(sourceCodeArr, decorationsArray, cursorPosition.line);
 
 	editor.setDecorations(decorationType, decorationsArray);
 }
@@ -104,8 +103,9 @@ function decorate(editor) {
  * Scans the lines of source code and fills up the decorationsArray with the appropriate decoration options
  * @param {string[]} sourceCodeArr Array of lines of the source code
  * @param {vscode.DecorationOptions[]} decorationsArray Array of vscode Decoration Options
+ * @param {number} cursorLine Position of the cursor
  */
-export function decorateSourceCode(sourceCodeArr, decorationsArray) {
+function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) {
 	const dom = new JSDOM.JSDOM("");
 	const DOMParser = dom.window.DOMParser;
 	const parser = new DOMParser;
@@ -133,20 +133,9 @@ export function decorateSourceCode(sourceCodeArr, decorationsArray) {
 	// Use to skip the current doc xml chunk when a cursor is found
 	let skipCurrent = false;
 
-	// TextEditor.selection object for the cursor
-	let cursorLine = null;
-
 	// The amount of indent for the doc xml chunk
-	let indent = 0;
+	let indent = 0
 
-
-	// current editor
-	const editor = vscode.window.activeTextEditor;
-
-	// Get cursor position
-	if (editor.selection.isEmpty) {
-		cursorLine = editor.selection.active;
-	}
 
 	// Loop through entire code
 	for (let line = 0; line < sourceCodeArr.length; line++) {
@@ -171,71 +160,73 @@ export function decorateSourceCode(sourceCodeArr, decorationsArray) {
 				returnLine = line;
 
 			// If cursor is within line,  raise skipCurrent flag to skip the decoration
-			if (cursorLine.line === line) skipCurrent = true;
+			if (cursorLine === line) skipCurrent = true;
 
 		} else if (docXml !== "") {
 			// If there's no match and docXml has values, xml chunk end has been reached
 
-			// Skip when skipCurrent flag is raised
-			if (skipCurrent) {
-				docXml = ""
-				paramLines = []
-				skipCurrent = false;
-				continue;
-			}
+			// Attempt to parse the XML
+			try {
+				// Throw error to skip if skipCurrent flag is raised due
+				if (skipCurrent) throw new Error;
 
-			// Create document by parsing XML. Added root tags to make the xml document valid
-			const document = parser.parseFromString("<root>" + docXml + "</root>", "text/xml");
+				const document = parser.parseFromString("<root>" + docXml + "</root>", "text/xml");
 
-			// Parse document for rags
-			const summaryElements = document.getElementsByTagName("summary")
-			const paramElements = document.getElementsByTagName("param")
-			const returnElements = document.getElementsByTagName("returns")
+				// Parse document for rags
+				const summaryElements = document.getElementsByTagName("summary")
+				const paramElements = document.getElementsByTagName("param")
+				const returnElements = document.getElementsByTagName("returns")
 
-			if (summaryLine !== -1) {
-				const summaryText = summaryElements[0].textContent;
+				if (summaryLine !== -1 && summaryElements[0]) {
+					const summaryText = summaryElements[0].textContent;
 
-				// Clear the lines until the last line
-				decorationsArray.push({
-					range: new vscode.Range(
-						new vscode.Position(summaryLine + 0, 0),
-						new vscode.Position(summaryEndLine, 0)
-					)
-				})
+					// Clear the lines until the last line
+					decorationsArray.push({
+						range: new vscode.Range(
+							new vscode.Position(summaryLine + 0, 0),
+							new vscode.Position(summaryEndLine, 0)
+						)
+					})
 
-				decorationsArray.push(getSummaryDecorator(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"), new vscode.Range(
-					new vscode.Position(summaryEndLine, indent),
-					new vscode.Position(summaryEndLine + 1, 0)
-				)))
-			}
-
-			paramLines.forEach((l, i) => {
-				const paramElement = paramElements[i];
-
-				let paramText = config.get("paramPrefix") + paramElement.getAttribute("name");
-
-				if (paramElement.textContent !== "") {
-					paramText += config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
+					decorationsArray.push(getSummaryDecorator(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"), new vscode.Range(
+						new vscode.Position(summaryEndLine, indent),
+						new vscode.Position(summaryEndLine + 1, 0)
+					)))
 				}
 
-				decorationsArray.push(getDecorator(paramText, new vscode.Range(
-					new vscode.Position(l, indent),
-					new vscode.Position(l + 1, 0)
-				), new vscode.ThemeColor("csPrettierDoc.param"), 500, "normal"))
-			})
+				paramLines.forEach((l, i) => {
+					const paramElement = paramElements[i];
 
-			if (returnLine !== -1) {
-				const returnText = config.get("returnPrefix") + returnElements[0].textContent + config.get("returnSuffix");
+					if (!paramElement) return;
 
-				decorationsArray.push(getDecorator(returnText, new vscode.Range(
-					new vscode.Position(returnLine, indent),
-					new vscode.Position(returnLine + 1, 0)
-				), new vscode.ThemeColor("csPrettierDoc.return")))
+					let paramText = config.get("paramPrefix") + paramElement.getAttribute("name");
+
+					if (paramElement.textContent !== "") {
+						paramText += config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
+					}
+
+					decorationsArray.push(getDecorator(paramText, new vscode.Range(
+						new vscode.Position(l, indent),
+						new vscode.Position(l + 1, 0)
+					), new vscode.ThemeColor("csPrettierDoc.param"), 500, "normal"))
+				})
+
+				if (returnLine !== -1 && returnElements[0]) {
+					const returnText = config.get("returnPrefix") + returnElements[0].textContent + config.get("returnSuffix");
+
+					decorationsArray.push(getDecorator(returnText, new vscode.Range(
+						new vscode.Position(returnLine, indent),
+						new vscode.Position(returnLine + 1, 0)
+					), new vscode.ThemeColor("csPrettierDoc.return")))
+				}
+			} catch (err) {
+				console.log(err)
+			} finally {
+				// Reset values
+				docXml = ""
+				paramLines = []
 			}
 
-			// Reset values
-			docXml = ""
-			paramLines = []
 		} else {
 			// If no match is found, no need to skip because the cursor can't possibly be on an XML doc
 			skipCurrent = false;
@@ -244,12 +235,20 @@ export function decorateSourceCode(sourceCodeArr, decorationsArray) {
 }
 
 /**
+ * Decorator for the actual comments to hide them
+ */
+const decorationType = vscode.window.createTextEditorDecorationType({
+	opacity: `${config.get("opacity")}`,
+});
+
+
+/**
  * Generates the decorator for summaries
  * @param {string} message 
  * @param {vscode.Range} range 
  * @returns 
  */
-export function getSummaryDecorator(message, range) {
+function getSummaryDecorator(message, range) {
 	return {
 		range,
 		renderOptions: {
@@ -275,7 +274,7 @@ export function getSummaryDecorator(message, range) {
  * @param {vscode.Range} range
  * @returns
  */
-export function getDecorator(message, range, color = "#449944",
+function getDecorator(message, range, color = "#449944",
 	weight = `${config.get("fontWeight")}`,
 	style = `${config.get("fontStyle")}`,
 	fontSize = `${config.get("fontSize")}`) {
@@ -305,5 +304,9 @@ function deactivate() { }
 
 module.exports = {
 	activate,
-	deactivate
+	deactivate,
+	decorationType,
+	getSummaryDecorator,
+	getDecorator,
+	decorateSourceCode
 }
