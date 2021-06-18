@@ -102,6 +102,35 @@ function decorate(editor) {
 }
 
 /**
+ * Generates a vscode Decorator Option with only range
+ * @param {number} beginLine
+ * @param {number} beginColumn
+ * @param {number} endLine
+ * @param {number} endColumn
+ * @returns {vscode.DecorationOptions}
+ */
+function getRangeOptions(beginLine, beginColumn, endLine, endColumn) {
+	return {
+		range: getRange(beginLine, beginColumn, endLine, endColumn)
+	}
+}
+
+/**
+ * Generates a vscode range
+ * @param {number} beginLine
+ * @param {number} beginColumn
+ * @param {number} endLine
+ * @param {number} endColumn
+ * @returns {vscode.Range}
+ */
+function getRange(beginLine, beginColumn, endLine, endColumn) {
+	return new vscode.Range(
+		new vscode.Position(beginLine, beginColumn),
+		new vscode.Position(endLine, endColumn)
+	)
+}
+
+/**
  * Scans the lines of source code and fills up the decorationsArray with the appropriate decoration options
  * @param {string[]} sourceCodeArr Array of lines of the source code
  * @param {vscode.DecorationOptions[]} decorationsArray Array of vscode Decoration Options
@@ -168,9 +197,9 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 			// If there's no match and docXml has values, xml chunk end has been reached
 
 			// Attempt to parse the XML
-			try {
-				// Throw error to skip if skipCurrent flag is raised due
-				if (skipCurrent) throw new Error;
+			parseXML: try {
+				// Skip if skipCurrent flag is raised
+				if (skipCurrent) break parseXML;
 
 				const document = parser.parseFromString("<root>" + docXml + "</root>", "text/xml");
 
@@ -183,17 +212,13 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					const summaryText = summaryElements[0].textContent;
 
 					// Clear the lines until the last line
-					decorationsArray.push({
-						range: new vscode.Range(
-							new vscode.Position(summaryLine + 0, 0),
-							new vscode.Position(summaryEndLine, 0)
-						)
-					})
+					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine, 0));
 
-					decorationsArray.push(getSummaryDecorator(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"), new vscode.Range(
-						new vscode.Position(summaryEndLine, indent),
-						new vscode.Position(summaryEndLine + 1, 0)
-					)))
+					decorationsArray.push(
+						getSummaryDecorator(config.get("summaryPrefix") + summaryText + config.get("summarySuffix"),
+							getRange(summaryEndLine, indent, summaryEndLine + 1, 0)
+						)
+					)
 				}
 
 				paramLines.forEach((l, i) => {
@@ -201,25 +226,21 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					if (!paramElement) return;
 
-					let paramText = config.get("paramPrefix") + paramElement.getAttribute("name");
+					const paramPrefix = config.get("paramPrefix") + paramElement.getAttribute("name");
 
-					if (paramElement.textContent !== "") {
-						paramText += config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
-					}
+					const paramText = config.get("paramDelimiter") + paramElement.textContent + config.get("paramSuffix");
 
-					decorationsArray.push(getDecorator(paramText, new vscode.Range(
-						new vscode.Position(l, indent),
-						new vscode.Position(l + 1, 0)
-					), new vscode.ThemeColor("csPrettierDoc.param"), 500, "normal"))
+					decorationsArray.push(getDecorator(paramPrefix + paramText,
+						getRange(l, indent, l + 1, 0),
+						new vscode.ThemeColor("csPrettierDoc.param"),
+						500,
+						"normal"))
 				})
 
 				if (returnLine !== -1 && returnElements[0]) {
 					const returnText = config.get("returnPrefix") + returnElements[0].textContent + config.get("returnSuffix");
 
-					decorationsArray.push(getDecorator(returnText, new vscode.Range(
-						new vscode.Position(returnLine, indent),
-						new vscode.Position(returnLine + 1, 0)
-					), new vscode.ThemeColor("csPrettierDoc.return")))
+					decorationsArray.push(getDecorator(returnText, getRange(returnLine, indent, returnLine + 1, 0), new vscode.ThemeColor("csPrettierDoc.return")))
 				}
 			} catch (err) {
 				console.log(err)
@@ -307,8 +328,5 @@ function deactivate() { }
 module.exports = {
 	activate,
 	deactivate,
-	decorationType,
-	getSummaryDecorator,
-	getDecorator,
 	decorateSourceCode
 }
