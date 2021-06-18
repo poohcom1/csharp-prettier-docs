@@ -47,57 +47,57 @@
       {
         "title": "C# Prettier Docs",
         "properties": {
-          "csharp-prettier-docs.summary.decorators.linePrefix": {
+          "csharp-prettier-docs.summary.markers.linePrefix": {
             "type": "string",
             "default": "═══ ",
             "description": "Decorative mark placed before the summary line"
           },
-          "csharp-prettier-docs.summary.decorators.lineSuffix": {
+          "csharp-prettier-docs.summary.markers.lineSuffix": {
             "type": "string",
             "default": " ═══",
             "description": "Decorative mark placed after the summary line"
           },
-          "csharp-prettier-docs.param.decorators.namePrefix": {
+          "csharp-prettier-docs.param.markers.namePrefix": {
             "type": "string",
             "default": " {",
             "description": "Decorative mark placed before the param name"
           },
-          "csharp-prettier-docs.param.decorators.nameSuffix": {
+          "csharp-prettier-docs.param.markers.nameSuffix": {
             "type": "string",
             "default": "}",
             "description": "Decorative mark placed after the param name"
           },
-          "csharp-prettier-docs.param.decorators.descriptionPrefix": {
+          "csharp-prettier-docs.param.markers.descriptionPrefix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed before the param description"
           },
-          "csharp-prettier-docs.param.decorators.descriptionSuffix": {
+          "csharp-prettier-docs.param.markers.descriptionSuffix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed after the param description"
           },
-          "csharp-prettier-docs.param.decorators.linePrefix": {
+          "csharp-prettier-docs.param.markers.linePrefix": {
             "type": "string",
             "default": " │ ",
             "description": "Decorative mark placed before the param line"
           },
-          "csharp-prettier-docs.param.decorators.delimiter": {
+          "csharp-prettier-docs.param.markers.delimiter": {
             "type": "string",
             "default": " ",
             "description": "Decorative mark placed between the parameter name and description"
           },
-          "csharp-prettier-docs.param.decorators.lineSuffix": {
+          "csharp-prettier-docs.param.markers.lineSuffix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed after the param line"
           },
-          "csharp-prettier-docs.returns.decorators.linePrefix": {
+          "csharp-prettier-docs.returns.markers.linePrefix": {
             "type": "string",
             "default": " ➥ ",
             "description": "Decorative mark placed before the returns line"
           },
-          "csharp-prettier-docs.returns.decorators.lineSuffix": {
+          "csharp-prettier-docs.returns.markers.lineSuffix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed after the returns line"
@@ -223,7 +223,7 @@
     "colors": [
       {
         "id": "csPrettierDoc.background",
-        "description": "The background color of the decorators",
+        "description": "The background color of the markers",
         "defaults": {
           "dark": "#353947",
           "light": "#FFFFFF",

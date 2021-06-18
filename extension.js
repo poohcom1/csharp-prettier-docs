@@ -228,7 +228,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine, 0));
 
 					decorationsArray.push(
-						getDecorator(configSummary.get("decorators.linePrefix") + summaryText + configSummary.get("decorators.lineSuffix"),
+						getDecorator(configSummary.get("markers.linePrefix") + summaryText + configSummary.get("markers.lineSuffix"),
 							getRange(summaryEndLine, indent, summaryEndLine + 1, 0),
 							"summary"
 						)
@@ -240,23 +240,23 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					if (!paramElement) return;
 
-					const paramPrefix = configParam.get("decorators.linePrefix");
+					const paramPrefix = configParam.get("markers.linePrefix");
 
-					const paramName = configParam.get("decorators.namePrefix") + paramElement.getAttribute("name") + configParam.get("decorators.nameSuffix");
+					const paramName = configParam.get("markers.namePrefix") + paramElement.getAttribute("name") + configParam.get("markers.nameSuffix");
 
 					let paramDescription = "";
 
 					if (paramElement.textContent.trim() != "") {
-						paramDescription += configParam.get("decorators.delimiter") + configParam.get("decorators.descriptionPrefix") + paramElement.textContent + configParam.get("decorators.descriptionSuffix")
+						paramDescription += configParam.get("markers.delimiter") + configParam.get("markers.descriptionPrefix") + paramElement.textContent + configParam.get("markers.descriptionSuffix")
 					}
 
-					const paramSuffix = configParam.get("decorators.lineSuffix");
+					const paramSuffix = configParam.get("markers.lineSuffix");
 
 					decorationsArray.push(getDecorator(paramPrefix + paramName + paramDescription + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
 				})
 
 				if (returnLine !== -1 && returnElements[0]) {
-					const returnText = configReturns.get("decorators.linePrefix") + returnElements[0].textContent + configReturns.get("decorators.lineSuffix");
+					const returnText = configReturns.get("markers.linePrefix") + returnElements[0].textContent + configReturns.get("markers.lineSuffix");
 
 					decorationsArray.push(getDecorator(returnText, getRange(returnLine, indent, returnLine + 1, 0), "returns"))
 				}
