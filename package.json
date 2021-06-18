@@ -59,12 +59,12 @@
           },
           "csharp-prettier-docs.param.markers.namePrefix": {
             "type": "string",
-            "default": " {",
+            "default": "",
             "description": "Decorative mark placed before the param name"
           },
           "csharp-prettier-docs.param.markers.nameSuffix": {
             "type": "string",
-            "default": "}",
+            "default": "",
             "description": "Decorative mark placed after the param name"
           },
           "csharp-prettier-docs.param.markers.descriptionPrefix": {
@@ -84,12 +84,12 @@
           },
           "csharp-prettier-docs.param.markers.delimiter": {
             "type": "string",
-            "default": " ",
+            "default": " -- ",
             "description": "Decorative mark placed between the parameter name and description"
           },
           "csharp-prettier-docs.param.markers.lineSuffix": {
             "type": "string",
-            "default": "",
+            "default": " - ",
             "description": "Decorative mark placed after the param line"
           },
           "csharp-prettier-docs.returns.markers.linePrefix": {
