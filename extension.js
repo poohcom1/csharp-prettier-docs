@@ -304,7 +304,7 @@ function getDecorator(message, range, configurationType) {
 				opacity: "0.9",
 				color: color,
 				contentText: message,
-				backgroundColor: new vscode.ThemeColor("csPrettierDoc.hintBackground"),
+				backgroundColor: new vscode.ThemeColor("csPrettierDoc.background"),
 				margin: `0px 3px 0px 3px;padding: ${configGeneral.get("verticalPadding")}px ${configGeneral.get(
 					"horizontalPadding"
 				)}px;`,
