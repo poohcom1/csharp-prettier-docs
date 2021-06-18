@@ -25,17 +25,17 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 | `csharp-prettier-docs.general.verticalPadding`    | Top and bottom padding of the background card                     | 1        |
 | `csharp-prettier-docs.param.markers.delimiter`    | Decorative mark placed between the parameter name and description | " -- "   |
 | `csharp-prettier-docs.param.markers.linePrefix`   | Decorative mark placed before the param line                      | " │ "    |
-| `csharp-prettier-docs.param.markers.lineSuffix`   | Decorative mark placed after the param line                       | " - "    |
+| `csharp-prettier-docs.param.markers.lineSuffix`   | Decorative mark placed after the param line                       | ""       |
 | `csharp-prettier-docs.param.markers.namePrefix`   | Decorative mark placed before the param name                      | ""       |
 | `csharp-prettier-docs.param.markers.nameSuffix`   | Decorative mark placed after the param name                       | ""       |
 | `csharp-prettier-docs.param.markers.textPrefix`   | Decorative mark placed before the param description               | ""       |
 | `csharp-prettier-docs.param.markers.textSuffix`   | Decorative mark placed after the param description                | ""       |
-| `csharp-prettier-docs.param.style.fontSize`       | Font size for the params decorator                                | 13       |
+| `csharp-prettier-docs.param.style.fontSize`       | Font size for the params decorator                                | 14       |
 | `csharp-prettier-docs.param.style.fontStyle`      | Font style for param decorator                                    | "normal" |
 | `csharp-prettier-docs.param.style.fontWeight`     | Font weight for the params decorator                              | 500      |
 | `csharp-prettier-docs.returns.markers.linePrefix` | Decorative mark placed before the returns line                    | " ➥ "    |
 | `csharp-prettier-docs.returns.markers.lineSuffix` | Decorative mark placed after the returns line                     | ""       |
-| `csharp-prettier-docs.returns.style.fontSize`     | Font size for the returns decorator                               | 13       |
+| `csharp-prettier-docs.returns.style.fontSize`     | Font size for the returns decorator                               | 14       |
 | `csharp-prettier-docs.returns.style.fontStyle`    | Font style for return decorator                                   | "italic" |
 | `csharp-prettier-docs.returns.style.fontWeight`   | Font weight for the returns decorator                             | 500      |
 | `csharp-prettier-docs.summary.markers.linePrefix` | Decorative mark placed before the summary line                    | "═══ "   |
