@@ -1,0 +1,10 @@
+node_modules
+.vscode-test/
+*.vsix
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
