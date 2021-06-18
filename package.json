@@ -67,12 +67,12 @@
             "default": "",
             "description": "Decorative mark placed after the param name"
           },
-          "csharp-prettier-docs.param.markers.descriptionPrefix": {
+          "csharp-prettier-docs.param.markers.textPrefix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed before the param description"
           },
-          "csharp-prettier-docs.param.markers.descriptionSuffix": {
+          "csharp-prettier-docs.param.markers.textSuffix": {
             "type": "string",
             "default": "",
             "description": "Decorative mark placed after the param description"
@@ -226,7 +226,7 @@
         "description": "The background color of the markers",
         "defaults": {
           "dark": "#353947",
-          "light": "#FFFFFF",
+          "light": "#ebebeb",
           "highContrast": "#353947"
         }
       },
@@ -235,7 +235,7 @@
         "description": "Summary text color",
         "defaults": {
           "dark": "#adccee",
-          "light": "#adccee",
+          "light": "#085db8",
           "highContrast": "#adccee"
         }
       },
@@ -244,7 +244,7 @@
         "description": "Param text color",
         "defaults": {
           "dark": "#97d47b",
-          "light": "#97d47b",
+          "light": "#3b9c0d",
           "highContrast": "#97d47b"
         }
       },
@@ -253,7 +253,7 @@
         "description": "Returns text color",
         "defaults": {
           "dark": "#ff6262",
-          "light": "#ff6262",
+          "light": "#920d0d",
           "highContrast": "#ff6262"
         }
       }

@@ -247,7 +247,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					let paramDescription = "";
 
 					if (paramElement.textContent.trim() != "") {
-						paramDescription += configParam.get("markers.delimiter") + configParam.get("markers.descriptionPrefix") + paramElement.textContent + configParam.get("markers.descriptionSuffix")
+						paramDescription += configParam.get("markers.delimiter") + configParam.get("markers.textPrefix") + paramElement.textContent + configParam.get("markers.textSuffix")
 					}
 
 					const paramSuffix = configParam.get("markers.lineSuffix");
