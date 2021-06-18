@@ -6,9 +6,14 @@ All notable changes to the "csharp-prettier-docs" extension will be documented i
 
 ## 1.2.2
 
-## Fixed
+### Added
+
+- Alert message when toggling
+
+### Fixed
 
 - Bad XML causing parsing errors when toggling
+- Editing XML docs overriding enable/disable toggles
 
 ## 1.2.1
 

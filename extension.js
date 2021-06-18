@@ -46,12 +46,22 @@ function activate(context) {
 			(editor) => editor.document.uri === event.document.uri
 		)[0];
 
+		if (!enabled) {
+			openEditor.setDecorations(decorationType, [])
+			return
+		};
+
 		decorate(openEditor);
 	});
 
 	// When configurations updated
 	vscode.workspace.onDidChangeConfiguration(() => {
 		config = vscode.workspace.getConfiguration("csPrettierDoc");
+
+		if (!enabled) {
+			getActiveEditor().setDecorations(decorationType, [])
+			return
+		};
 
 		decorate(getActiveEditor());
 	})
@@ -63,11 +73,13 @@ function activate(context) {
 
 			if (!enabled) {
 				getActiveEditor().setDecorations(decorationType, []) // Remove decorations
+
+				vscode.window.showInformationMessage("Disabled C# Pretty Docs!")
 			} else {
 				decorate(getActiveEditor())
-			}
 
-			print(enabled)
+				vscode.window.showInformationMessage("Enabled C# Pretty Docs!")
+			}
 		})
 	)
 
