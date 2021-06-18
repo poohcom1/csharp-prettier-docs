@@ -17,6 +17,14 @@
   "categories": [
     "Other"
   ],
+  "license": "MIT",
+  "keywords": [
+    "xml",
+    "documentation",
+    "decorations",
+    "csharp",
+    "pretty"
+  ],
   "activationEvents": [
     "onLanguage:csharp",
     "onCommand:csPrettierDoc.toggle"
