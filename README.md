@@ -20,7 +20,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 | ------------------------------------------------- | ----------------------------------------------------------------- | ------------- |
 | `csharp-prettier-docs.general.borderRadius`       | Border radius of the background card                              | 5             |
 | `csharp-prettier-docs.general.horizontalPadding`  | Right and left padding of the background card                     | 4             |
-| `csharp-prettier-docs.general.margin`             | Marins for the background card                                    | 2             |
+| `csharp-prettier-docs.general.margin`             | Margins for the background card                                    | 2             |
 | `csharp-prettier-docs.general.opacity`            | Opacity of the actual doc comment                                 | 0.3           |
 | `csharp-prettier-docs.general.verticalPadding`    | Top and bottom padding of the background card                     | 1             |
 | `csharp-prettier-docs.param.markers.delimiter`    | Decorative mark placed between the parameter name and description | " -- "        |
