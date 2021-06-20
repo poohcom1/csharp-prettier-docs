@@ -13,4 +13,4 @@ node_modules
 ### Utils
 
 config.md
-package-json-parse.js
+vscode-extension-api-package-json-parser.js
