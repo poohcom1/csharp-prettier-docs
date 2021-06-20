@@ -41,7 +41,7 @@
         "command": "csPrettierDoc.toggle",
         "title": "Toggle pretty docs",
         "category": "C# Pretty Docs",
-        "description": "Toggles the pretty docs."
+        "description": "Toggles the pretty docs"
       }
     ],
     "configuration": [
