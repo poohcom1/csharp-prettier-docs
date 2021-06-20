@@ -205,7 +205,7 @@
           "csharp-prettier-docs.general.margin": {
             "type": "number",
             "default": 2,
-            "description": "Marins for the background card"
+            "description": "Margins for the background card"
           },
           "csharp-prettier-docs.general.verticalPadding": {
             "type": "number",
