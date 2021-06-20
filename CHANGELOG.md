@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.2
+
+- Updated README.md
+
 ## 1.3.1
 
 ### Changed
