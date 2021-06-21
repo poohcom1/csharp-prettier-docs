@@ -86,7 +86,7 @@
           "csharp-prettier-docs.param.markers.delimiter": {
             "type": "string",
             "default": " -- ",
-            "description": "Decorative mark placed between the parameter name and description"
+            "description": "Decorative mark between the param name and description"
           },
           "csharp-prettier-docs.param.markers.lineSuffix": {
             "type": "string",
