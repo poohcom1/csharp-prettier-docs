@@ -223,20 +223,23 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				const returnElements = document.getElementsByTagName("returns")
 
 				if (summaryLine !== -1 && summaryElements[0]) {
-					const summaryText = summaryElements[0].textContent.trim();
+					const summaryLines = summaryElements[0].textContent.trim().split("\n");
 
-					const summaryLines = summaryText.split("\n");
-					console.log(summaryLines)
+					for (let i = 0; i < summaryLines.length; i++) {
+						summaryLines[i] = configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix");
+					}
+
+					if (configGeneral.get("markers.blockPrefix") !== "") {
+						summaryLines.splice(0, 0, configGeneral.get("markers.blockPrefix"))
+						console.log(summaryLines)
+					}
 
 					// Clear the lines until the last line
 					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine - summaryLines.length + 1, 0));
 
-					summaryLines[0] = configSummary.get("markers.blockPrefix") + summaryLines[0];
-					summaryLines[summaryLines.length - 1] = summaryLines[summaryLines.length - 1] + configSummary.get("markers.blockSuffix");
-
 					for (let i = 0; i < summaryLines.length; i++) {
 						decorationsArray.push(
-							getDecorator(configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix"),
+							getDecorator(summaryLines[i],
 								// Starting from the end, go back 'length' amounts of line
 								getRange(summaryEndLine - summaryLines.length + 1 + i, indent,
 									summaryEndLine + 1 - summaryLines.length + 1 + i, 0), "summary"
