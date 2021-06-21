@@ -48,6 +48,11 @@
       {
         "title": "C# Prettier Docs",
         "properties": {
+          "csharp-prettier-docs.general.markers.blockPrefix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed before the comment block"
+          },
           "csharp-prettier-docs.summary.markers.linePrefix": {
             "type": "string",
             "default": "═══ ",
@@ -57,11 +62,6 @@
             "type": "string",
             "default": " ═══",
             "description": "Decorative mark placed after each summary line"
-          },
-          "csharp-prettier-docs.general.markers.blockPrefix": {
-            "type": "string",
-            "default": "",
-            "description": "Decorative mark placed before the comment block"
           },
           "csharp-prettier-docs.param.markers.namePrefix": {
             "type": "string",

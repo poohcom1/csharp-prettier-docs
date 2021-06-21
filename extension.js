@@ -170,10 +170,10 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 	let docXml = "";
 
 	// Line numbers for the tags
-	let summaryLine = -1;
-	let summaryEndLine = -1;
-	let paramLines = [];
-	let returnLine = -1;
+	let summaryIndex = -1;
+	let summaryEndIndex = -1;
+	let paramIndexes = [];
+	let returnIndex = -1;
 
 	// Use to skip the current doc xml chunk when a cursor is found
 	let skipCurrent = false;
@@ -196,13 +196,13 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 			// Store index of tag lines
 			if (currentLine.match(summaryReg))
-				summaryLine = line;
+				summaryIndex = line;
 			else if (currentLine.match(summaryEndReg))
-				summaryEndLine = line;
+				summaryEndIndex = line;
 			else if (currentLine.match(paramReg))
-				paramLines.push(line)
+				paramIndexes.push(line)
 			else if (currentLine.match(returnReg))
-				returnLine = line;
+				returnIndex = line;
 
 			// If cursor is within line,  raise skipCurrent flag to skip the decoration
 			if (cursorLine === line) skipCurrent = true;
@@ -222,64 +222,79 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				const paramElements = document.getElementsByTagName("param")
 				const returnElements = document.getElementsByTagName("returns")
 
-				if (summaryLine !== -1 && summaryElements[0]) {
+				if (summaryIndex !== -1 && summaryElements[0]) {
 					const summaryLines = summaryElements[0].textContent.trim().split("\n");
 
+					// Apply line markers to all
 					for (let i = 0; i < summaryLines.length; i++) {
 						summaryLines[i] = configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix");
 					}
 
+					// Apply block marker if exists
 					if (configGeneral.get("markers.blockPrefix") !== "") {
 						summaryLines.splice(0, 0, configGeneral.get("markers.blockPrefix"))
-						console.log(summaryLines)
 					}
 
-					// Clear the lines until the last line
-					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine - summaryLines.length + 1, 0));
+					// Clear the lines until the first line to add comments
+					decorationsArray.push(getRangeOptions(summaryIndex, 0, summaryEndIndex - summaryLines.length + 1, 0));
 
 					for (let i = 0; i < summaryLines.length; i++) {
 						decorationsArray.push(
 							getDecorator(summaryLines[i],
 								// Starting from the end, go back 'length' amounts of line
-								getRange(summaryEndLine - summaryLines.length + 1 + i, indent,
-									summaryEndLine + 1 - summaryLines.length + 1 + i, 0), "summary"
-							)
+								getRange(summaryEndIndex - summaryLines.length + 1 + i, indent,
+									summaryEndIndex + 1 - summaryLines.length + 1 + i, 0), "summary")
 						)
 					}
-
 				}
 
-				paramLines.forEach((l, i) => {
+				const paramPrefix = configParam.get("markers.linePrefix");
+				const paramSuffix = configParam.get("markers.lineSuffix");
+
+				const paramTextPrefix = configParam.get("markers.textPrefix");
+				const paramTextSuffix = configParam.get("markers.textSuffix")
+
+				const delimiter = configParam.get("markers.delimiter");
+
+				paramIndexes.forEach((l, i) => {
 					const paramElement = paramElements[i];
 
 					if (!paramElement) return;
 
-					const paramPrefix = configParam.get("markers.linePrefix");
-
 					const paramName = configParam.get("markers.namePrefix") + paramElement.getAttribute("name") + configParam.get("markers.nameSuffix");
 
-					let paramDescription = "";
+					const paramTextLines = paramElement.textContent.split("\n")
 
-					if (paramElement.textContent.trim() != "") {
-						paramDescription += configParam.get("markers.delimiter") + configParam.get("markers.textPrefix") + paramElement.textContent + configParam.get("markers.textSuffix")
+					if (paramTextLines.length === 0) {
+						decorationsArray.push(getDecorator(paramPrefix + paramName + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
+						return;
 					}
 
-					const paramSuffix = configParam.get("markers.lineSuffix");
+					paramTextLines[0] = paramPrefix + paramName + delimiter + paramTextPrefix + paramTextLines[0];
+					paramTextLines[paramTextLines.length - 1] += paramTextSuffix;
 
-					decorationsArray.push(getDecorator(paramPrefix + paramName + paramDescription + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
+					for (let i = 1; i < paramTextLines.length; i++) {
+						paramTextLines[i] = paramPrefix + "\t\t" + paramTextLines[i];
+					}
+
+					for (let i = 0; i < paramTextLines.length; i++) {
+						decorationsArray.push(getDecorator(paramTextLines[i],
+							getRange(l + i, indent,
+								l + 1 + i, 0), "param"))
+					}
 				})
 
-				if (returnLine !== -1 && returnElements[0]) {
+				if (returnIndex !== -1 && returnElements[0]) {
 					const returnText = configReturns.get("markers.linePrefix") + returnElements[0].textContent + configReturns.get("markers.lineSuffix");
 
-					decorationsArray.push(getDecorator(returnText, getRange(returnLine, indent, returnLine + 1, 0), "returns"))
+					decorationsArray.push(getDecorator(returnText, getRange(returnIndex, indent, returnIndex + 1, 0), "returns"))
 				}
 			} catch (err) {
 				console.log(err)
 			} finally {
 				// Reset values
 				docXml = ""
-				paramLines = []
+				paramIndexes = []
 			}
 
 		} else {
