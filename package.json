@@ -51,12 +51,22 @@
           "csharp-prettier-docs.summary.markers.linePrefix": {
             "type": "string",
             "default": "═══ ",
-            "description": "Decorative mark placed before the summary line"
+            "description": "Decorative mark placed before each summary line"
           },
           "csharp-prettier-docs.summary.markers.lineSuffix": {
             "type": "string",
             "default": " ═══",
-            "description": "Decorative mark placed after the summary line"
+            "description": "Decorative mark placed after each summary line"
+          },
+          "csharp-prettier-docs.summary.markers.blockPrefix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed before the summary block"
+          },
+          "csharp-prettier-docs.summary.markers.blockSuffix": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed after the summary block"
           },
           "csharp-prettier-docs.param.markers.namePrefix": {
             "type": "string",

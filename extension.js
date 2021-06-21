@@ -23,6 +23,7 @@ let enabled = true;
 function activate(context) {
 	const getActiveEditor = () => vscode.window.activeTextEditor;
 
+
 	// When switching documents
 	vscode.window.onDidChangeActiveTextEditor(editor => {
 		if (!enabled) {
@@ -189,7 +190,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 		// If there's a match for comment, add comment to docXml and store other values
 		if (match) {
 			//print(match[0])
-			docXml += match[0]; // Add comment (without the triple backslash) to the docXml string
+			docXml += match[0] + "\n"; // Add comment (without the triple backslash) to the docXml string
 
 			indent = currentLine.match(/(\/\/\/)/).index; // Set indent based on index of the triple backslash
 
@@ -222,17 +223,27 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				const returnElements = document.getElementsByTagName("returns")
 
 				if (summaryLine !== -1 && summaryElements[0]) {
-					const summaryText = summaryElements[0].textContent;
+					const summaryText = summaryElements[0].textContent.trim();
+
+					const summaryLines = summaryText.split("\n");
+					console.log(summaryLines)
 
 					// Clear the lines until the last line
-					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine, 0));
+					decorationsArray.push(getRangeOptions(summaryLine, 0, summaryEndLine - summaryLines.length + 1, 0));
 
-					decorationsArray.push(
-						getDecorator(configSummary.get("markers.linePrefix") + summaryText + configSummary.get("markers.lineSuffix"),
-							getRange(summaryEndLine, indent, summaryEndLine + 1, 0),
-							"summary"
+					summaryLines[0] = configSummary.get("markers.blockPrefix") + summaryLines[0];
+					summaryLines[summaryLines.length - 1] = summaryLines[summaryLines.length - 1] + configSummary.get("markers.blockSuffix");
+
+					for (let i = 0; i < summaryLines.length; i++) {
+						decorationsArray.push(
+							getDecorator(configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix"),
+								// Starting from the end, go back 'length' amounts of line
+								getRange(summaryEndLine - summaryLines.length + 1 + i, indent,
+									summaryEndLine + 1 - summaryLines.length + 1 + i, 0), "summary"
+							)
 						)
-					)
+					}
+
 				}
 
 				paramLines.forEach((l, i) => {
