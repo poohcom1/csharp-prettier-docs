@@ -30,8 +30,6 @@ suite('C# prettier docs', () => {
 		doubleDocEditor = await vscode.window.showTextDocument(document2);
 	})
 
-	after(() => vscode.window.showInformationMessage('Finished all tests.'));
-
 	test('should perform no decorations when there are no docs', () => {
 		const sourceCodeArr = ["test", "test"];
 		const decoratorOptions = [];
