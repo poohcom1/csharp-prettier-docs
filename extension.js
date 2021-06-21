@@ -274,7 +274,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					paramTextLines[paramTextLines.length - 1] += paramTextSuffix;
 
 					for (let i = 1; i < paramTextLines.length; i++) {
-						paramTextLines[i] = paramPrefix + "\t\t" + paramTextLines[i];
+						paramTextLines[i] = paramPrefix + " " + paramTextLines[i];
 					}
 
 					for (let i = 0; i < paramTextLines.length; i++) {
@@ -334,7 +334,7 @@ function getDecorator(message, range, configurationType) {
 				color: color,
 				contentText: message,
 				backgroundColor: new vscode.ThemeColor("csPrettierDoc.background"),
-				margin: `0px 3px 0px 3px;padding: ${configGeneral.get("verticalPadding")}px ${configGeneral.get(
+				margin: `0px ${configGeneral.get("margin")}px 0px ${configGeneral.get("margin")}px;padding: ${configGeneral.get("verticalPadding")}px ${configGeneral.get(
 					"horizontalPadding"
 				)}px;`,
 				borderRadius: `${configGeneral.get("borderRadius")}px`,

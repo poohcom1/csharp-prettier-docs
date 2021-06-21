@@ -3,7 +3,7 @@
   "displayName": "C# Prettier Docs",
   "description": "Make C#'s XML documentations much more pleasant to look at.",
   "publisher": "poohcom1",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"
@@ -111,7 +111,7 @@
           "csharp-prettier-docs.general.opacity": {
             "type": "number",
             "default": 0.3,
-            "description": "Opacity of the actual doc comment"
+            "description": "Opacity of the actual doc comment, out of 1.0"
           },
           "csharp-prettier-docs.summary.style.fontSize": {
             "type": "number",
@@ -210,7 +210,7 @@
           },
           "csharp-prettier-docs.general.margin": {
             "type": "number",
-            "default": 2,
+            "default": 3,
             "description": "Margins for the background card"
           },
           "csharp-prettier-docs.general.verticalPadding": {
