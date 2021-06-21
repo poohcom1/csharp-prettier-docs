@@ -2,7 +2,7 @@ const assert = require('assert');
 const { before } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
-const { decorateSourceCode } = require("../../extension.js");
+const { decorateSourceCode } = require("../../extension");
 
 const testFolderLocation = "/../../test/suite/test_files/"
 
