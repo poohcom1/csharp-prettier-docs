@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { before } = require('mocha');
+const { describe, before } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
 const { decorateSourceCode } = require("../../extension");
@@ -22,9 +22,7 @@ const doc1ParamIndex = 3;
 const doc1ReturnsIndex = 5;
 
 
-suite('C# prettier docs', function () {
-	vscode.window.showInformationMessage('Start all tests.');
-
+describe('C# prettier docs', function () {
 	before(async function () {
 		const uri1 = vscode.Uri.file(
 			path.join(__dirname + testFolderLocation + 'TestDoc1.cs')
@@ -39,9 +37,6 @@ suite('C# prettier docs', function () {
 		const document2 = await vscode.workspace.openTextDocument(uri2);
 		docEditor2 = await vscode.window.showTextDocument(document2);
 		sourceCodeArray2 = docEditor2.document.getText().split("\n");
-
-		this.timeout(1000)
-		await sleep(500)
 	})
 
 	test('should perform no decorations when there are no docs', function () {
@@ -77,7 +72,23 @@ suite('C# prettier docs', function () {
 		assert.strictEqual(decoratorOptions.length, 0);
 	})
 
-	suite("Summary docs", function () {
+	test('should configure the correct background color', function () {
+		const decoratorOptions = [];
+		decorateSourceCode(sourceCodeArray1, decoratorOptions);
+
+		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.backgroundColor,
+			new vscode.ThemeColor("csPrettierDoc.background"))
+	})
+
+	test('should configure the correct border radius', function () {
+		const decoratorOptions = [];
+		decorateSourceCode(sourceCodeArray1, decoratorOptions);
+
+		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.borderRadius,
+			vscode.workspace.getConfiguration("csharp-prettier-docs.general").get("borderRadius") + "px")
+	})
+
+	describe("Summary docs", function () {
 		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
@@ -111,23 +122,9 @@ suite('C# prettier docs', function () {
 		})
 	})
 
-	test('should configure the correct background color', function () {
-		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
-		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.backgroundColor,
-			new vscode.ThemeColor("csPrettierDoc.background"))
-	})
 
-	test('should configure the correct border radius', function () {
-		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArray1, decoratorOptions);
-
-		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.borderRadius,
-			vscode.workspace.getConfiguration("csharp-prettier-docs.general").get("borderRadius") + "px")
-	})
-
-	suite("Param docs", function () {
+	describe("Param docs", function () {
 		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
@@ -160,7 +157,7 @@ suite('C# prettier docs', function () {
 		})
 	})
 
-	suite("Returns docs", function () {
+	describe("Returns docs", function () {
 		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
