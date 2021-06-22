@@ -18,7 +18,7 @@ let sourceCodeArray2;
 
 const doc1SummaryIndex = 1;
 const doc1ParamIndex = 3;
-const doc1ReturnsIndex = 5;
+const doc1ReturnsIndex = 4;
 
 
 suite('C# prettier docs', () => {
@@ -56,7 +56,7 @@ suite('C# prettier docs', () => {
 		decoratorOptions.forEach(console.log)
 
 		// TestDoc1 has 1 summary, 2 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 6);
+		assert.strictEqual(decoratorOptions.length, 5);
 	})
 
 	test('should perform 2 decorations per summary, 1 per param, and 1 per return for multiple docs', () => {
@@ -64,7 +64,7 @@ suite('C# prettier docs', () => {
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
 		// TestDoc2 has 2 summary, 3 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 10);
+		assert.strictEqual(decoratorOptions.length, 8);
 	})
 
 	test('should perform no decoration when cursor is within the docs line', () => {
