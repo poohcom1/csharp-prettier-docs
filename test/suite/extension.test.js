@@ -53,6 +53,8 @@ suite('C# prettier docs', () => {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions, null);
 
+		decoratorOptions.forEach(console.log)
+
 		// TestDoc1 has 1 summary, 2 params, and 1 return
 		assert.strictEqual(decoratorOptions.length, 6);
 	})
