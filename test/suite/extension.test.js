@@ -3,12 +3,13 @@ const { before } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
 const { decorateSourceCode } = require("../../extension");
+const { time } = require('console');
 
 const testFolderLocation = "/../../test/suite/test_files/"
 
-// function sleep(ms) {
-// 	return new Promise(resolve => setTimeout(resolve, ms));
-// }
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 let docEditor1;
 let docEditor2;
@@ -38,6 +39,9 @@ suite('C# prettier docs', function () {
 		const document2 = await vscode.workspace.openTextDocument(uri2);
 		docEditor2 = await vscode.window.showTextDocument(document2);
 		sourceCodeArray2 = docEditor2.document.getText().split("\n");
+
+		this.timeout(1000)
+		await sleep(500)
 	})
 
 	test('should perform no decorations when there are no docs', function () {
