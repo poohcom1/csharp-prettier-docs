@@ -18,13 +18,13 @@ let sourceCodeArray2;
 
 const doc1SummaryIndex = 1;
 const doc1ParamIndex = 3;
-const doc1ReturnsIndex = 4;
+const doc1ReturnsIndex = 5;
 
 
-suite('C# prettier docs', () => {
+suite('C# prettier docs', function () {
 	vscode.window.showInformationMessage('Start all tests.');
 
-	before(async () => {
+	before(async function () {
 		const uri1 = vscode.Uri.file(
 			path.join(__dirname + testFolderLocation + 'TestDoc1.cs')
 		);
@@ -40,7 +40,7 @@ suite('C# prettier docs', () => {
 		sourceCodeArray2 = docEditor2.document.getText().split("\n");
 	})
 
-	test('should perform no decorations when there are no docs', () => {
+	test('should perform no decorations when there are no docs', function () {
 		const sourceCodeArr = ["test", "test"];
 		const decoratorOptions = [];
 
@@ -49,33 +49,32 @@ suite('C# prettier docs', () => {
 		assert.strictEqual(decoratorOptions.length, 0)
 	});
 
-	test('should perform 2 decorations per summary, 1 per param, and 1 per return', () => {
+	test('should perform 2 decorations per summary, 1 per param, and 1 per return', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions, null);
 
-		decoratorOptions.forEach(console.log)
 
 		// TestDoc1 has 1 summary, 2 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 5);
+		assert.strictEqual(decoratorOptions.length, 6);
 	})
 
-	test('should perform 2 decorations per summary, 1 per param, and 1 per return for multiple docs', () => {
+	test('should perform 2 decorations per summary, 1 per param, and 1 per return for multiple docs', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
 		// TestDoc2 has 2 summary, 3 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 8);
+		assert.strictEqual(decoratorOptions.length, 10);
 	})
 
-	test('should perform no decoration when cursor is within the docs line', () => {
+	test('should perform no decoration when cursor is within the docs line', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions, 9);
 
 		assert.strictEqual(decoratorOptions.length, 0);
 	})
 
-	suite("Summary docs", () => {
-		test('should configure the correct text style', () => {
+	suite("Summary docs", function () {
+		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -84,7 +83,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text weight and style', () => {
+		test('should configure the correct text weight and style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -96,7 +95,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text colors', () => {
+		test('should configure the correct text colors', function () {
 
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
@@ -108,7 +107,7 @@ suite('C# prettier docs', () => {
 		})
 	})
 
-	test('should configure the correct background color', () => {
+	test('should configure the correct background color', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -116,7 +115,7 @@ suite('C# prettier docs', () => {
 			new vscode.ThemeColor("csPrettierDoc.background"))
 	})
 
-	test('should configure the correct border radius', () => {
+	test('should configure the correct border radius', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -124,8 +123,8 @@ suite('C# prettier docs', () => {
 			vscode.workspace.getConfiguration("csharp-prettier-docs.general").get("borderRadius") + "px")
 	})
 
-	suite("Param docs", () => {
-		test('should configure the correct text style', () => {
+	suite("Param docs", function () {
+		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -134,7 +133,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text weight and style', () => {
+		test('should configure the correct text weight and style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -146,7 +145,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text colors', () => {
+		test('should configure the correct text colors', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -157,8 +156,8 @@ suite('C# prettier docs', () => {
 		})
 	})
 
-	suite("Returns docs", () => {
-		test('should configure the correct text style', () => {
+	suite("Returns docs", function () {
+		test('should configure the correct text style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -167,7 +166,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text weight and style', () => {
+		test('should configure the correct text weight and style', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
@@ -179,7 +178,7 @@ suite('C# prettier docs', () => {
 		})
 
 
-		test('should configure the correct text colors', () => {
+		test('should configure the correct text colors', function () {
 			const decoratorOptions = [];
 			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
