@@ -10,8 +10,11 @@ const testFolderLocation = "/../../test/suite/test_files/"
 // 	return new Promise(resolve => setTimeout(resolve, ms));
 // }
 
-let singleDocEditor;
-let doubleDocEditor;
+let docEditor1;
+let docEditor2;
+
+let sourceCodeArray1;
+let sourceCodeArray2;
 
 const doc1SummaryIndex = 1;
 const doc1ParamIndex = 3;
@@ -26,13 +29,15 @@ suite('C# prettier docs', () => {
 			path.join(__dirname + testFolderLocation + 'TestDoc1.cs')
 		);
 		const document1 = await vscode.workspace.openTextDocument(uri1);
-		singleDocEditor = await vscode.window.showTextDocument(document1);
+		docEditor1 = await vscode.window.showTextDocument(document1);
+		sourceCodeArray1 = docEditor1.document.getText().split("\n");
 
 		const uri2 = vscode.Uri.file(
 			path.join(__dirname + testFolderLocation + 'TestDoc2.cs')
 		);
 		const document2 = await vscode.workspace.openTextDocument(uri2);
-		doubleDocEditor = await vscode.window.showTextDocument(document2);
+		docEditor2 = await vscode.window.showTextDocument(document2);
+		sourceCodeArray2 = docEditor2.document.getText().split("\n");
 	})
 
 	test('should perform no decorations when there are no docs', () => {
@@ -45,40 +50,32 @@ suite('C# prettier docs', () => {
 	});
 
 	test('should perform 2 decorations per summary, 1 per param, and 1 per return', () => {
-		const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArr, decoratorOptions, null);
+		decorateSourceCode(sourceCodeArray1, decoratorOptions, null);
 
-		// OneXMLDoc has 1 summary, 2 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 6, singleDocEditor);
+		// TestDoc1 has 1 summary, 2 params, and 1 return
+		assert.strictEqual(decoratorOptions.length, 6);
 	})
 
 	test('should perform 2 decorations per summary, 1 per param, and 1 per return for multiple docs', () => {
-		const sourceCodeArr = doubleDocEditor.document.getText().split("\n");
-
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArr, decoratorOptions, null);
+		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
-		// OneXMLDoc has 2 summary, 3 params, and 1 return
+		// TestDoc2 has 2 summary, 3 params, and 1 return
 		assert.strictEqual(decoratorOptions.length, 10);
 	})
 
 	test('should perform no decoration when cursor is within the docs line', () => {
-		const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArr, decoratorOptions, 9);
+		decorateSourceCode(sourceCodeArray1, decoratorOptions, 9);
 
 		assert.strictEqual(decoratorOptions.length, 0);
 	})
 
 	suite("Summary docs", () => {
 		test('should configure the correct text style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.fontStyle,
 				vscode.workspace.getConfiguration("csharp-prettier-docs.summary.style").get("fontStyle"))
@@ -86,10 +83,8 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text weight and style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const weight = vscode.workspace.getConfiguration("csharp-prettier-docs.summary.style").get("fontWeight")
 			const size = vscode.workspace.getConfiguration("csharp-prettier-docs.summary.style").get("fontSize")
@@ -100,10 +95,9 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text colors', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
 
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const color = new vscode.ThemeColor(`csPrettierDoc.summary`);
 
@@ -113,20 +107,16 @@ suite('C# prettier docs', () => {
 	})
 
 	test('should configure the correct background color', () => {
-		const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArr, decoratorOptions);
+		decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.backgroundColor,
 			new vscode.ThemeColor("csPrettierDoc.background"))
 	})
 
 	test('should configure the correct border radius', () => {
-		const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArr, decoratorOptions);
+		decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 		assert.deepStrictEqual(decoratorOptions[doc1SummaryIndex].renderOptions.before.borderRadius,
 			vscode.workspace.getConfiguration("csharp-prettier-docs.general").get("borderRadius") + "px")
@@ -134,10 +124,8 @@ suite('C# prettier docs', () => {
 
 	suite("Param docs", () => {
 		test('should configure the correct text style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			assert.deepStrictEqual(decoratorOptions[doc1ParamIndex].renderOptions.before.fontStyle,
 				vscode.workspace.getConfiguration("csharp-prettier-docs.param.style").get("fontStyle"))
@@ -145,10 +133,8 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text weight and style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const weight = vscode.workspace.getConfiguration("csharp-prettier-docs.param.style").get("fontWeight")
 			const size = vscode.workspace.getConfiguration("csharp-prettier-docs.param.style").get("fontSize")
@@ -159,10 +145,8 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text colors', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const color = new vscode.ThemeColor(`csPrettierDoc.param`);
 
@@ -173,10 +157,8 @@ suite('C# prettier docs', () => {
 
 	suite("Returns docs", () => {
 		test('should configure the correct text style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			assert.deepStrictEqual(decoratorOptions[doc1ReturnsIndex].renderOptions.before.fontStyle,
 				vscode.workspace.getConfiguration("csharp-prettier-docs.returns.style").get("fontStyle"))
@@ -184,10 +166,8 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text weight and style', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const weight = vscode.workspace.getConfiguration("csharp-prettier-docs.returns.style").get("fontWeight")
 			const size = vscode.workspace.getConfiguration("csharp-prettier-docs.returns.style").get("fontSize")
@@ -198,10 +178,8 @@ suite('C# prettier docs', () => {
 
 
 		test('should configure the correct text colors', () => {
-			const sourceCodeArr = singleDocEditor.document.getText().split("\n");
-
 			const decoratorOptions = [];
-			decorateSourceCode(sourceCodeArr, decoratorOptions);
+			decorateSourceCode(sourceCodeArray1, decoratorOptions);
 
 			const color = new vscode.ThemeColor(`csPrettierDoc.returns`);
 
