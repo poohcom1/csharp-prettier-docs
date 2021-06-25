@@ -6,7 +6,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 
 ## Features
 
-![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/cs-prettier-screenshot.png)
+![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot.png)
 
 - (Mostly) Hides the default C# XML docs and replaces it with pretty text decorators.
 
@@ -33,7 +33,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
   "csharp-prettier-docs.returns.style.fontStyle": "normal"
 ```
 
-![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/cs-prettier-screenshot-jsdoc.png)
+![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot-jsdoc.png)
 
 ### Configurations
 
