@@ -3,7 +3,6 @@ const { describe, before } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
 const { decorateSourceCode } = require("../../extension");
-const { time } = require('console');
 
 const testFolderLocation = "/../../test/suite/test_files/"
 
@@ -62,7 +61,7 @@ describe('C# prettier docs', function () {
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
 		// TestDoc2 has 2 summary, 3 params, and 1 return
-		assert.strictEqual(decoratorOptions.length, 10);
+		assert.strictEqual(decoratorOptions.length, 11);
 	})
 
 	test('should perform no decoration when cursor is within the docs line', function () {

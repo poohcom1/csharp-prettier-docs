@@ -265,6 +265,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					const paramTextLines = paramElement.textContent.split("\n")
 
+					// When there is no param description
 					if (paramTextLines.length === 0) {
 						decorationsArray.push(getDecorator(paramPrefix + paramName + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
 						return;
@@ -284,10 +285,26 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 					}
 				})
 
-				if (returnIndex !== -1 && returnElements[0]) {
-					const returnText = configReturns.get("markers.linePrefix") + returnElements[0].textContent + configReturns.get("markers.lineSuffix");
+				const returnLinePrefix = configReturns.get("markers.linePrefix");
+				const returnLineSuffix = configReturns.get("markers.lineSuffix");
 
-					decorationsArray.push(getDecorator(returnText, getRange(returnIndex, indent, returnIndex + 1, 0), "returns"))
+				const returnPrefix = configReturns.get("markers.name")
+
+				if (returnIndex !== -1 && returnElements[0]) {
+					const returnLines = returnElements[0].textContent.split("\n")
+
+					returnLines[0] = returnPrefix + returnLines[0]
+
+					for (let i = 0; i < returnLines.length; i++) {
+						returnLines[i] = returnLinePrefix + returnLines[i] + returnLineSuffix;
+					}
+
+					for (let i = 0; i < returnLines.length; i++) {
+						decorationsArray.push(getDecorator(returnLines[i],
+							getRange(returnIndex + i, indent,
+								returnIndex + 1 + i, 0), "returns"))
+					}
+
 				}
 			} catch (err) {
 				console.log(err)

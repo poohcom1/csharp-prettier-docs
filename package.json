@@ -53,6 +53,11 @@
             "default": "",
             "description": "Decorative mark placed before the comment block"
           },
+          "csharp-prettier-docs.summary.markers.name": {
+            "type": "string",
+            "default": "",
+            "description": "Decorative mark placed once before the summary"
+          },
           "csharp-prettier-docs.summary.markers.linePrefix": {
             "type": "string",
             "default": "═══ ",
@@ -86,7 +91,7 @@
           "csharp-prettier-docs.param.markers.linePrefix": {
             "type": "string",
             "default": " │ ",
-            "description": "Decorative mark placed before the param line"
+            "description": "Decorative mark placed before every param line"
           },
           "csharp-prettier-docs.param.markers.delimiter": {
             "type": "string",
@@ -96,17 +101,22 @@
           "csharp-prettier-docs.param.markers.lineSuffix": {
             "type": "string",
             "default": "",
-            "description": "Decorative mark placed after the param line"
+            "description": "Decorative mark placed after every param line"
+          },
+          "csharp-prettier-docs.returns.markers.name": {
+            "type": "string",
+            "default": " ➥ ",
+            "description": "Decorative mark placed once before the return"
           },
           "csharp-prettier-docs.returns.markers.linePrefix": {
             "type": "string",
-            "default": " ➥ ",
-            "description": "Decorative mark placed before the returns line"
+            "default": "",
+            "description": "Decorative mark placed before every returns line"
           },
           "csharp-prettier-docs.returns.markers.lineSuffix": {
             "type": "string",
             "default": "",
-            "description": "Decorative mark placed after the returns line"
+            "description": "Decorative mark placed after every returns line"
           },
           "csharp-prettier-docs.general.opacity": {
             "type": "number",
