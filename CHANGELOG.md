@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.4.0
+
+### Added
+
+- Support for multi-line docs
+- Specific block/line/name markers for more customizability
+
 ## 1.3.2
 
 - Updated README.md

@@ -14,7 +14,28 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 
 - Use the Toggle command to quickly enable/disable the extension.
 
-## Configurations
+## Settings
+
+### Preset Example
+
+#### JS Doc style
+
+```
+  "csharp-prettier-docs.general.markers.blockPrefix": "/*",
+  "csharp-prettier-docs.summary.markers.linePrefix": " * ",
+  "csharp-prettier-docs.summary.markers.lineSuffix": "",
+  "csharp-prettier-docs.param.markers.linePrefix": "  * ",
+  "csharp-prettier-docs.param.markers.namePrefix": "@param {",
+  "csharp-prettier-docs.param.markers.nameSuffix": "}",
+  "csharp-prettier-docs.param.markers.delimiter": " ",
+  "csharp-prettier-docs.returns.markers.linePrefix": " * ",
+  "csharp-prettier-docs.returns.markers.name": "@returns ",
+  "csharp-prettier-docs.returns.style.fontStyle": "normal"
+```
+
+![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/cs-prettier-screenshot-jsdoc.png)
+
+### Configurations
 
 | Name                                               | Description                                            | Default  |
 | -------------------------------------------------- | ------------------------------------------------------ | -------- |
@@ -47,7 +68,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 | `csharp-prettier-docs.summary.style.fontStyle`     | Font style for summary decorator                       | "normal" |
 | `csharp-prettier-docs.summary.style.fontWeight`    | Font weight for the summary decorator                  | 600      |
 
-## Colors
+### Colors
 
 | Name                       | Description                         |
 | -------------------------- | ----------------------------------- |
@@ -56,7 +77,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 | `csPrettierDoc.param`      | Param text color                    |
 | `csPrettierDoc.returns`    | Returns text color                  |
 
-## Commands
+### Commands
 
 | Name                   | Description             |
 | ---------------------- | ----------------------- |
