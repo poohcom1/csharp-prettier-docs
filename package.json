@@ -3,7 +3,7 @@
   "displayName": "C# Prettier Docs",
   "description": "Make C#'s XML documentations much more pleasant to look at.",
   "publisher": "poohcom1",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"

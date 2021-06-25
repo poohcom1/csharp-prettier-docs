@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.1
+
+- Minor changes to project structure for reduced size
+
 ## 1.4.0
 
 ### Added
