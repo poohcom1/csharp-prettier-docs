@@ -1,13 +1,24 @@
 const assert = require('assert');
-const { describe, before } = require('mocha');
+const { describe, before, after } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
 const { decorateSourceCode } = require("../../extension");
 
-const testFolderLocation = "/../../test/suite/test_files/"
+const testFolderLocation = "/../../test/suite/test_workspace/"
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+// Kudos to https://tomaszs2.medium.com/how-to-test-visual-studio-code-extension-part-1-b1ba62c20116 
+async function changeConfig(name, value) {
+	const configs = vscode.workspace.getConfiguration();
+	await configs.update(
+		"csharp-prettier-docs." + name,
+		value,
+		vscode.ConfigurationTarget.Global
+	);
 }
 
 let docEditor1;
@@ -16,7 +27,7 @@ let docEditor2;
 let sourceCodeArray1;
 let sourceCodeArray2;
 
-const doc1SummaryIndex = 1;
+const doc1SummaryIndex = 2; // First summary line with decorators
 const doc1ParamIndex = 3;
 const doc1ReturnsIndex = 5;
 
@@ -47,20 +58,20 @@ describe('C# prettier docs', function () {
 		assert.strictEqual(decoratorOptions.length, 0)
 	});
 
-	test('should perform 2 decorations per summary, 1 per param, and 1 per return', function () {
+	test('should perform 1 decoration per line of xml doc', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions, null);
 
 
-		// TestDoc1 has 1 summary, 2 params, and 1 return
+		// TestDoc1 6 lines of doc
 		assert.strictEqual(decoratorOptions.length, 6);
 	})
 
-	test('should perform 2 decorations per summary, 1 per param, and 1 per return for multiple docs', function () {
+	test('should perform 1 decoration per line of xml doc for multiple docs', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
-		// TestDoc2 has 2 summary, 3 params, and 1 return
+		// TestDoc2 11 lines of doc
 		assert.strictEqual(decoratorOptions.length, 11);
 	})
 

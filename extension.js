@@ -181,7 +181,6 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 	// The amount of indent for the doc xml chunk
 	let indent = 0
 
-
 	// Loop through entire code
 	for (let line = 0; line < sourceCodeArr.length; line++) {
 		const currentLine = sourceCodeArr[line]
@@ -205,7 +204,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				returnIndex = line;
 
 			// If cursor is within line,  raise skipCurrent flag to skip the decoration
-			if (cursorLine === line) skipCurrent = true;
+			if (cursorLine && cursorLine === line) skipCurrent = true;
 
 		} else if (docXml !== "") {
 			// If there's no match and docXml has values, xml chunk end has been reached
@@ -223,6 +222,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				const returnElements = document.getElementsByTagName("returns")
 
 				if (summaryIndex !== -1 && summaryElements[0]) {
+					console.log("Text: " + summaryElements[0].textContent)
 					const summaryLines = summaryElements[0].textContent.trim().split("\n");
 
 					// Apply line markers to all
@@ -235,9 +235,12 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 						summaryLines.splice(0, 0, configGeneral.get("markers.blockPrefix"))
 					}
 
-					// Clear the lines until the first line to add comments
-					decorationsArray.push(getRangeOptions(summaryIndex, 0, summaryEndIndex - summaryLines.length + 1, 0));
+					// Clear the lines until the first lines
+					for (let i = 0; i < summaryEndIndex - summaryIndex - summaryLines.length + 1; i++) {
+						decorationsArray.push(getRangeOptions(summaryIndex + i, 0, summaryIndex + i + 1, 0));
+					}
 
+					// Add decorator for each line of summary
 					for (let i = 0; i < summaryLines.length; i++) {
 						decorationsArray.push(
 							getDecorator(summaryLines[i],
@@ -307,6 +310,7 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 				}
 			} catch (err) {
+				console.log("Parse error: ")
 				console.log(err)
 			} finally {
 				// Reset values

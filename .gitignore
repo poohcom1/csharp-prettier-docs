@@ -3,6 +3,8 @@ node_modules
 *.vsix
 .packages/**
 
+vsc-extension-quickstart.md
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json

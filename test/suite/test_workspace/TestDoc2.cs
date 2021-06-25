@@ -1,6 +1,6 @@
 
 // Contains 1 summary, 2 params, and 1 return.
-// Should include (2 summary * 3) + (3 param) + (2 return) = 11 decorators
+// Should include (2 summary * 2 [or 3 if blockPrefix exists]) + (3 param) + (2 return) = 9 decorators or 11
 public class TestDoc2 {
     /// <summary>
     /// A test function
