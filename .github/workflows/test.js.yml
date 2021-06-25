@@ -1,4 +1,5 @@
 # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
+name: CI Test
 
 on:
   push:
@@ -9,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest] # macos-latest, ubuntu-latest
+        os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
