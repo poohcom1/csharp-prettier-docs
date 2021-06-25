@@ -67,12 +67,12 @@ describe('C# prettier docs', function () {
 		assert.strictEqual(decoratorOptions.length, 6);
 	})
 
-	test('should perform 1 decoration per line of xml doc for multiple docs', function () {
+	test('should perform 1 decoration per line of xml doc with multiline comments', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
 
 		// TestDoc2 11 lines of doc
-		assert.strictEqual(decoratorOptions.length, 11);
+		assert.strictEqual(decoratorOptions.length, 13);
 	})
 
 	test('should perform no decoration when cursor is within the docs line', function () {
