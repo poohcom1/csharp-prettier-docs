@@ -6,7 +6,7 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 
 ## Features
 
-![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot.png)
+![cs-prettier-doc-image](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot.png)
 
 - (Mostly) Hides the default C# XML docs and replaces it with pretty text decorators.
 
@@ -16,30 +16,17 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 
 ## Settings
 
-### Preset Example
+### Presets
 
-#### JS Doc style
+Checkout some presets over at:
 
-```
-  "csharp-prettier-docs.general.opacity": 0.2,
-  "csharp-prettier-docs.general.markers.blockPrefix": "/*",
-  "csharp-prettier-docs.summary.style.fontWeight": 500,
-  "csharp-prettier-docs.summary.markers.linePrefix": " * ",
-  "csharp-prettier-docs.summary.markers.lineSuffix": "",
-  "csharp-prettier-docs.param.markers.linePrefix": " * ",
-  "csharp-prettier-docs.param.markers.namePrefix": "@param {",
-  "csharp-prettier-docs.param.markers.nameSuffix": "}",
-  "csharp-prettier-docs.param.markers.delimiter": " ",
-  "csharp-prettier-docs.returns.markers.linePrefix": " * ",
-  "csharp-prettier-docs.returns.markers.tag": "@returns ",
-  "csharp-prettier-docs.returns.style.fontStyle": "normal",
-  "csharp-prettier-docs.other.markers.linePrefix": " * @",
-  "csharp-prettier-docs.other.markers.namePrefix": " {",
-  "csharp-prettier-docs.other.markers.nameSuffix": "}",
-  "csharp-prettier-docs.other.markers.delimiter": " ",
-```
+https://github.com/poohcom1/csharp-prettier-docs/tree/master/presets
 
-![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot-jsdoc.png)
+Preset contributions are more than welcome!
+
+#### Example: JS Doc Style
+
+![JS Doc style](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot-jsdoc.png)
 
 ### Configurations
 
