@@ -3,7 +3,7 @@
   "displayName": "C# Prettier Docs",
   "description": "Make C#'s XML documentations much more pleasant to look at.",
   "publisher": "poohcom1",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "icon": "cs-prettier-docs-logo.png",
   "engines": {
     "vscode": "^1.57.0"
@@ -352,7 +352,7 @@
       },
       {
         "id": "csPrettierDoc.other",
-        "description": "Param text color",
+        "description": "Other tags' text color",
         "defaults": {
           "dark": "#97d47b",
           "light": "#3b9c0d",

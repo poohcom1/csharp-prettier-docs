@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.5.1
+
+### Fixed
+
+- Typo in README.md
+
 ## 1.5.0
 
 ### Added

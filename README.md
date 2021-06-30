@@ -115,7 +115,7 @@ Other tags:
 | `csPrettierDoc.summary`    | Summary text color                  |
 | `csPrettierDoc.param`      | Param text color                    |
 | `csPrettierDoc.returns`    | Returns text color                  |
-| `csPrettierDoc.other`      | Param text color                    |
+| `csPrettierDoc.other`      | Other tags' text color              |
 
 ### Commands
 
