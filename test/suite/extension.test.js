@@ -99,6 +99,19 @@ describe('C# prettier docs', function () {
 		assert.strictEqual(decoratorOptions.length, 2);
 	})
 
+	test('should perform named decorations for tags with name attribute', () => {
+		const decoratorOptions = [];
+		decorateSourceCode(sourceCodeArray4, decoratorOptions, null);
+
+		const namePrefix = vscode.workspace.getConfiguration("csharp-prettier-docs.other.markers").get("namePrefix");
+		const nameSuffix = vscode.workspace.getConfiguration("csharp-prettier-docs.other.markers").get("nameSuffix");
+
+		const containsNameMarkers = decoratorOptions[1].renderOptions.before.contentText.includes(namePrefix)
+			&& decoratorOptions[1].renderOptions.before.contentText.includes(nameSuffix)
+
+		assert.ok(containsNameMarkers);
+	})
+
 	test('should configure the correct background color', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray1, decoratorOptions);

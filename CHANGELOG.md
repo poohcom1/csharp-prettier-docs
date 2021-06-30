@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.5.0
+
+### Added
+
+- Support for most types of tags
+- Suuport for single-line summary docs
+
 ## 1.4.1
 
 - Minor changes to project structure for reduced size

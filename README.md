@@ -91,7 +91,7 @@ Returns:
 <linePrefix>Description cont.<lineSuffix>\n
 
 Other tags:
-<linePrefix>#marker-name(<namePrefix>#name?<nameSuffix>)<delimiter><textPrefix?>#Description<lineSuffix>\n
+<linePrefix>#marker-name<namePrefix?>#name?<nameSuffix?><delimiter><textPrefix?>#Description<lineSuffix>\n
 <linePrefix>#Description <textSuffix?><lineSuffix>\n
 <!-- Markers with ? are only applied if the tag has a name attribute -->
 ```
