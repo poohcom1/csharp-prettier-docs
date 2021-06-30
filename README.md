@@ -21,16 +21,21 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 #### JS Doc style
 
 ```
-  "csharp-prettier-docs.general.markers.blockPrefix": "/*",
-  "csharp-prettier-docs.summary.markers.linePrefix": " * ",
+  "csharp-prettier-docs.general.opacity": 0.2,
+  "csharp-prettier-docs.summary.style.fontWeight": 500,
+  "csharp-prettier-docs.summary.markers.linePrefix": "/* ",
   "csharp-prettier-docs.summary.markers.lineSuffix": "",
-  "csharp-prettier-docs.param.markers.linePrefix": "  * ",
+  "csharp-prettier-docs.param.markers.linePrefix": " * ",
   "csharp-prettier-docs.param.markers.namePrefix": "@param {",
   "csharp-prettier-docs.param.markers.nameSuffix": "}",
   "csharp-prettier-docs.param.markers.delimiter": " ",
   "csharp-prettier-docs.returns.markers.linePrefix": " * ",
-  "csharp-prettier-docs.returns.markers.name": "@returns ",
-  "csharp-prettier-docs.returns.style.fontStyle": "normal"
+  "csharp-prettier-docs.returns.markers.tag": "@returns ",
+  "csharp-prettier-docs.returns.style.fontStyle": "normal",
+  "csharp-prettier-docs.other.markers.linePrefix": " * @",
+  "csharp-prettier-docs.other.markers.namePrefix": " {",
+  "csharp-prettier-docs.other.markers.nameSuffix": "}",
+  "csharp-prettier-docs.other.markers.delimiter": " ",
 ```
 
 ![alt text](https://raw.githubusercontent.com/poohcom1/csharp-prettier-docs/master/.readme_res/cs-prettier-screenshot-jsdoc.png)
@@ -67,6 +72,29 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 | `csharp-prettier-docs.summary.style.fontSize`      | Font size for the summary decorator                    | 15       |
 | `csharp-prettier-docs.summary.style.fontStyle`     | Font style for summary decorator                       | "normal" |
 | `csharp-prettier-docs.summary.style.fontWeight`    | Font weight for the summary decorator                  | 600      |
+
+#### Marker Syntax
+
+```xml
+<blockPrefix>
+
+Summary:
+<linePrefix><tag>#Description<lineSuffix>\n
+<linePrefix>#Description<lineSuffix>\n
+
+Param:
+<linePrefix><namePrefix>#name<nameSuffix><delimiter><textPrefix>#Description<lineSuffix>\n
+<linePrefix>#Description<textSuffix><lineSuffix>\n
+
+Returns:
+<linePrefix><tag>Description<lineSuffix>\n
+<linePrefix>Description cont.<lineSuffix>\n
+
+Other tags:
+<linePrefix>#marker-name(<namePrefix>#name?<nameSuffix>)<delimiter><textPrefix?>#Description<lineSuffix>\n
+<linePrefix>#Description <textSuffix?><lineSuffix>\n
+<!-- Markers with ? are only applied if the tag has a name attribute -->
+```
 
 ### Colors
 

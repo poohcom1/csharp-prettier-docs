@@ -1,20 +1,21 @@
+// @ts-check
 const vscode = require("vscode")
 const JSDOM = require("jsdom");
 
-// Get the config
-let configGeneral;
-let configSummary;
-let configParam;
-let configReturns;
+// Get the config (not using )
+let configGeneral = vscode.workspace.getConfiguration("csharp-prettier-docs.general");
+let configSummary = vscode.workspace.getConfiguration("csharp-prettier-docs.summary");
+let configParam = vscode.workspace.getConfiguration("csharp-prettier-docs.param");
+let configReturns = vscode.workspace.getConfiguration("csharp-prettier-docs.returns");
+let configOther = vscode.workspace.getConfiguration("csharp-prettier-docs.other");
 
 function getConfigs() {
 	configGeneral = vscode.workspace.getConfiguration("csharp-prettier-docs.general");
 	configSummary = vscode.workspace.getConfiguration("csharp-prettier-docs.summary");
 	configParam = vscode.workspace.getConfiguration("csharp-prettier-docs.param");
 	configReturns = vscode.workspace.getConfiguration("csharp-prettier-docs.returns");
+	configOther = vscode.workspace.getConfiguration("csharp-prettier-docs.other");
 }
-
-getConfigs();
 
 
 // For disabling with the toggle command
@@ -35,9 +36,9 @@ function activate(context) {
 	})
 
 	// When moving the cursor and highlighting
-	vscode.window.onDidChangeTextEditorSelection(editor => {
+	vscode.window.onDidChangeTextEditorSelection(() => {
 		if (!enabled) {
-			editor.setDecorations(decorationType, [])
+			getActiveEditor().setDecorations(decorationType, [])
 			return
 		};
 
@@ -161,12 +162,8 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 	const summaryReg = /(< *summary)/
 	// For summary ending tag
 	const summaryEndReg = /(<\/summary)/
-	// For param tag
-	const paramReg = /(< *param)/
-	// For return tag
-	const returnReg = /(< *returns)/
 	// For other tags
-	const otherReg = /(< *.* *>)/
+	const tagReg = /(?<=<).*?(?=>)/
 
 	// String for the comment xml
 	let docXml = "";
@@ -174,8 +171,11 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 	// Line numbers for the tags
 	let summaryIndex = -1;
 	let summaryEndIndex = -1;
-	let paramIndexes = [];
-	let returnIndex = -1;
+
+	/**
+	 * @type {Object.<string, number[]>} lineNumber: tag
+	 */
+	let tagIndexes = {};
 
 	// Use to skip the current doc xml chunk when a cursor is found
 	let skipCurrent = false;
@@ -195,17 +195,34 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 			indent = currentLine.match(/(\/\/\/)/).index; // Set indent based on index of the triple backslash
 
+			let matchFound = false;
+
 			// Store index of tag lines
-			if (currentLine.match(summaryReg))
+			if (currentLine.match(summaryReg)) {
 				summaryIndex = line;
+				matchFound = true;
+			}
 
-			if (currentLine.match(summaryEndReg))
+			if (currentLine.match(summaryEndReg)) {
 				summaryEndIndex = line;
+				matchFound = true;
+			}
 
-			if (currentLine.match(paramReg))
-				paramIndexes.push(line)
-			else if (currentLine.match(returnReg))
-				returnIndex = line;
+			if (!matchFound) {
+				let match = currentLine.match(tagReg);
+
+				if (match) {
+					const tagName = match[0].trim().split(" ")[0];
+
+					if (tagIndexes[tagName]) {
+						tagIndexes[tagName].push(line);
+					} else {
+						tagIndexes[tagName] = [line]
+					}
+				}
+
+			}
+
 
 			// If cursor is within line, raise skipCurrent flag to skip the decoration
 			if (cursorLine && cursorLine === line) skipCurrent = true;
@@ -222,22 +239,19 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 				// Parse document for rags
 				const summaryElements = document.getElementsByTagName("summary")
-				const paramElements = document.getElementsByTagName("param")
-				const returnElements = document.getElementsByTagName("returns")
+
 
 				if (summaryIndex !== -1 && summaryElements[0]) {
 					const summaryLines = summaryElements[0].textContent.trim().split("\n");
 
-					/// STRING EDITING
-					// Apply line markers to all
-					for (let i = 0; i < summaryLines.length; i++) {
-						summaryLines[i] = configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix");
-					}
+					const linePrefix = configSummary.get("markers.linePrefix");
+					const lineSuffix = configSummary.get("markers.lineSuffix");
 
-					// Apply block marker if exists
-					if (configGeneral.get("markers.blockPrefix") !== "") {
-						summaryLines.splice(0, 0, configGeneral.get("markers.blockPrefix"))
-					}
+					const tag = configSummary.get("markers.tag")
+
+					const blockPrefix = configGeneral.get("markers.blockPrefix");
+
+					/// STRING EDITING
 
 					/// DECORATIONS
 
@@ -249,6 +263,16 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 							lineSuffix: ""
 						}, summaryIndex, indent))
 					} else {
+						// Apply line markers to all
+						for (let i = 0; i < summaryLines.length; i++) {
+							summaryLines[i] = linePrefix + tag + summaryLines[i] + lineSuffix;
+						}
+
+						// Apply block marker if exists
+						if (blockPrefix !== "") {
+							summaryLines.splice(0, 0, blockPrefix)
+						}
+
 						// Clear the lines until the first lines
 						for (let i = 0; i < summaryEndIndex - summaryIndex - summaryLines.length + 1; i++) {
 							decorationsArray.push(getRangeOptions(summaryIndex + i, 0, summaryIndex + i + 1, 0));
@@ -268,59 +292,82 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 				}
 
-				const paramPrefix = configParam.get("markers.linePrefix");
-				const paramSuffix = configParam.get("markers.lineSuffix");
 
-				const paramTextPrefix = configParam.get("markers.textPrefix");
-				const paramTextSuffix = configParam.get("markers.textSuffix")
+				for (const [tag, lines] of Object.entries(tagIndexes)) {
+					const tagElements = document.getElementsByTagName(tag);
 
-				const delimiter = configParam.get("markers.delimiter");
+					if (!tagElements || tagElements.length === 0) continue;
 
-				paramIndexes.forEach((l, i) => {
-					const paramElement = paramElements[i];
+					lines.forEach((line, i) => {
+						const element = tagElements[i];
 
-					if (!paramElement) return;
+						if (!element) return;
 
-					const addedDeco = applyDecoToNamedElement(
-						"param",
-						paramElement.getAttribute("name"),
-						paramElement.textContent.split("\n"),
-						{
-							prefix: paramPrefix,
-							suffix: paramSuffix,
-							namePrefix: configParam.get("markers.namePrefix"),
-							nameSuffix: configParam.get("markers.nameSuffix"),
-							textPrefix: paramTextPrefix,
-							textSuffix: paramTextSuffix,
-							delimiter: delimiter
-						},
-						l,
-						indent)
+						const name = element.getAttribute("name");
 
-					decorationsArray.push(...addedDeco)
-				})
+						if (name) {
+							const config = tag === "param" ? configParam : configOther;
 
-				const returnLinePrefix = configReturns.get("markers.linePrefix");
-				const returnLineSuffix = configReturns.get("markers.lineSuffix");
+							const prefix = config.get("markers.linePrefix");
+							const suffix = config.get("markers.lineSuffix");
 
-				const returnPrefix = configReturns.get("markers.name")
+							let namePrefix = config.get("markers.namePrefix")
+							const nameSuffix = config.get("markers.nameSuffix")
 
-				if (returnIndex !== -1 && returnElements[0]) {
-					const returnLines = returnElements[0].textContent.split("\n")
+							if (tag !== "param") namePrefix = tag + namePrefix;
 
-					decorationsArray.push(...applyDecoToElement("returns", returnLines, {
-						prefix: returnPrefix,
-						linePrefix: returnLinePrefix,
-						lineSuffix: returnLineSuffix
-					}, returnIndex, indent))
+							const textPrefix = config.get("markers.textPrefix");
+							const textSuffix = config.get("markers.textSuffix")
+
+							const delimiter = config.get("markers.delimiter");
+
+							decorationsArray.push(...applyDecoToNamedElement(
+								tag,
+								name,
+								element.textContent.split("\n"),
+								{
+									prefix: prefix,
+									suffix: suffix,
+									namePrefix: namePrefix,
+									nameSuffix: nameSuffix,
+									textPrefix: textPrefix,
+									textSuffix: textSuffix,
+									delimiter: delimiter
+								},
+								line,
+								indent))
+
+						} else {
+							const config = tag === "returns" ? configReturns : configOther;
+
+							const returnLinePrefix = config.get("markers.linePrefix");
+							const returnLineSuffix = config.get("markers.lineSuffix");
+
+							let prefixTag = config.get("markers.tag");
+
+							if (tag !== "returns") {
+								prefixTag = tag + config.get("markers.delimiter");
+							}
+
+							decorationsArray.push(
+								...applyDecoToElement(tag,
+									element.textContent.split("\n"), {
+									prefix: prefixTag,
+									linePrefix: returnLinePrefix,
+									lineSuffix: returnLineSuffix
+								}, line, indent))
+						}
+					})
 				}
+
 			} catch (err) {
 				console.log("Parse error: ")
 				console.log(err)
 			} finally {
 				// Reset values
 				docXml = ""
-				paramIndexes = []
+				summaryIndex = summaryEndIndex = -1;
+				tagIndexes = {}
 			}
 
 		} else {
@@ -331,28 +378,30 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 }
 
 /**
- * 
+ * Apply decorations for regular tag
  * @param {string} tag
- * @param {string[]} valueLines
+ * @param {string[]} descriptionLines
+ * @param {object} markers
  * @param {string} markers.prefix
  * @param {string} markers.linePrefix
  * @param {string} markers.lineSuffix
  * @param {number} line 
  * @param {number} indent 
- * @returns {vscode.workspace.DecorationOptions[]}
+ * @returns {vscode.DecorationOptions[]}
  */
-function applyDecoToElement(tag, valueLines, markers, line, indent) {
+function applyDecoToElement(tag, descriptionLines, markers, line, indent) {
 	const decorationsArray = []
 
-	valueLines[0] = markers.prefix + valueLines[0]
+	descriptionLines[0] = markers.prefix + descriptionLines[0]
 
-	for (let i = 0; i < valueLines.length; i++) {
-		valueLines[i] = markers.linePrefix + valueLines[i] + markers.lineSuffix;
+	for (let i = 0; i < descriptionLines.length; i++) {
+		descriptionLines[i] = markers.linePrefix + descriptionLines[i] + markers.lineSuffix;
 	}
 
-	for (let i = 0; i < valueLines.length; i++) {
-		decorationsArray.push(getDecorator(valueLines[i],
+	for (let i = 0; i < descriptionLines.length; i++) {
+		decorationsArray.push(getDecorator(descriptionLines[i],
 			getRange(line + i, indent,
+				// Use return for all none standard, nameless tags
 				line + 1 + i, 0), tag))
 	}
 
@@ -360,12 +409,12 @@ function applyDecoToElement(tag, valueLines, markers, line, indent) {
 }
 
 
-
 /**
- * 
+ * Applies decoration for a tag with a name attribute
  * @param {string} tag
  * @param {string} name
- * @param {string[]} valueLines
+ * @param {string[]} descriptionLines
+ * @param {object} markers
  * @param {string} markers.prefix
  * @param {string} markers.suffix
  * @param {string} markers.namePrefix
@@ -375,28 +424,28 @@ function applyDecoToElement(tag, valueLines, markers, line, indent) {
  * @param {string} markers.textSuffix
  * @param {number} line 
  * @param {number} indent 
- * @returns {vscode.workspace.DecorationOptions[]}
+ * @returns {vscode.DecorationOptions[]}
  */
-function applyDecoToNamedElement(tag, name, valueLines, markers, line, indent) {
+function applyDecoToNamedElement(tag, name, descriptionLines, markers, line, indent) {
 	const decorationsArray = []
 
 	const nameAttr = markers.namePrefix + name + markers.nameSuffix;
 
 	// When there is no param description
-	if (valueLines.length === 0) {
-		decorationsArray.push(getDecorator(markers.prefix + nameAttr + markers.suffix, getRange(line, indent, line + 1, 0), tag))
+	if (descriptionLines.length === 0) {
+		decorationsArray.push(getDecorator(markers.prefix + nameAttr + markers.suffix, getRange(line, indent, line + 1, 0), "param"))
 		return;
 	}
 
-	valueLines[0] = markers.prefix + nameAttr + markers.delimiter + markers.textPrefix + valueLines[0];
-	valueLines[valueLines.length - 1] += markers.textSuffix;
+	descriptionLines[0] = markers.prefix + nameAttr + markers.delimiter + markers.textPrefix + descriptionLines[0];
+	descriptionLines[descriptionLines.length - 1] += markers.textSuffix;
 
-	for (let i = 1; i < valueLines.length; i++) {
-		valueLines[i] = markers.prefix + " " + valueLines[i];
+	for (let i = 1; i < descriptionLines.length; i++) {
+		descriptionLines[i] = markers.prefix + " " + descriptionLines[i];
 	}
 
-	for (let i = 0; i < valueLines.length; i++) {
-		decorationsArray.push(getDecorator(valueLines[i],
+	for (let i = 0; i < descriptionLines.length; i++) {
+		decorationsArray.push(getDecorator(descriptionLines[i],
 			getRange(line + i, indent,
 				line + 1 + i, 0), tag))
 	}
@@ -408,7 +457,7 @@ function applyDecoToNamedElement(tag, name, valueLines, markers, line, indent) {
  * Decorator for the actual comments to hide them
  */
 const decorationType = vscode.window.createTextEditorDecorationType({
-	opacity: `${configGeneral.get("opacity")}`,
+	opacity: `${configGeneral.get("opacity")}`
 });
 
 
@@ -417,9 +466,13 @@ const decorationType = vscode.window.createTextEditorDecorationType({
  * @param {string} message
  * @param {vscode.Range} range
  * @param {string} configurationType
- * @returns
+ * @returns {vscode.DecorationOptions}
  */
 function getDecorator(message, range, configurationType) {
+	if (configurationType !== "summary" && configurationType !== "returns" && configurationType !== "param") {
+		configurationType = "other";
+	}
+
 	const decoratorConfig = vscode.workspace.getConfiguration("csharp-prettier-docs." + configurationType)
 
 	const color = new vscode.ThemeColor(`csPrettierDoc.${configurationType}`);
@@ -430,13 +483,14 @@ function getDecorator(message, range, configurationType) {
 		range,
 		renderOptions: {
 			before: {
-				opacity: "0.9",
 				color: color,
 				contentText: message,
 				backgroundColor: new vscode.ThemeColor("csPrettierDoc.background"),
 				margin: `0px ${configGeneral.get("margin")}px 0px ${configGeneral.get("margin")}px;padding: ${configGeneral.get("verticalPadding")}px ${configGeneral.get(
 					"horizontalPadding"
 				)}px;`,
+				// @ts-ignore
+				opacity: "0.9",
 				borderRadius: `${configGeneral.get("borderRadius")}px`,
 				fontWeight: weight + `; font-size: ${fontSize}px;`,
 				fontStyle: style
@@ -444,9 +498,6 @@ function getDecorator(message, range, configurationType) {
 		},
 	};
 }
-
-
-
 
 
 // this method is called when your extension is deactivated

@@ -1,0 +1,17 @@
+{
+    "csharp-prettier-docs.general.opacity": 0.2,
+    "csharp-prettier-docs.summary.style.fontWeight": 500,
+    "csharp-prettier-docs.summary.markers.linePrefix": "/* ",
+    "csharp-prettier-docs.summary.markers.lineSuffix": "",
+    "csharp-prettier-docs.param.markers.linePrefix": " * ",
+    "csharp-prettier-docs.param.markers.namePrefix": "@param {",
+    "csharp-prettier-docs.param.markers.nameSuffix": "}",
+    "csharp-prettier-docs.param.markers.delimiter": " ",
+    "csharp-prettier-docs.returns.markers.linePrefix": " * ",
+    "csharp-prettier-docs.returns.markers.tag": "@returns ",
+    "csharp-prettier-docs.returns.style.fontStyle": "normal",
+    "csharp-prettier-docs.other.markers.linePrefix": " * @",
+    "csharp-prettier-docs.other.markers.namePrefix": " {",
+    "csharp-prettier-docs.other.markers.nameSuffix": "}",
+    "csharp-prettier-docs.other.markers.delimiter": " "
+}

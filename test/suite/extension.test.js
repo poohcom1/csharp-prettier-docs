@@ -1,25 +1,11 @@
 const assert = require('assert');
-const { describe, before, after } = require('mocha');
+const { describe, before } = require('mocha');
 const vscode = require('vscode');
 const path = require('path');
 const { decorateSourceCode } = require("../../extension");
 
 const testFolderLocation = "/../../test/suite/test_workspace/"
 
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-// Kudos to https://tomaszs2.medium.com/how-to-test-visual-studio-code-extension-part-1-b1ba62c20116 
-async function changeConfig(name, value) {
-	const configs = vscode.workspace.getConfiguration();
-	await configs.update(
-		"csharp-prettier-docs." + name,
-		value,
-		vscode.ConfigurationTarget.Global
-	);
-}
 
 let docEditor1;
 let docEditor2;
@@ -27,6 +13,7 @@ let docEditor2;
 let sourceCodeArray1;
 let sourceCodeArray2;
 let sourceCodeArray3;
+let sourceCodeArray4;
 
 const doc1SummaryIndex = 2; // First summary line with decorators
 const doc1ParamIndex = 3;
@@ -55,6 +42,13 @@ describe('C# prettier docs', function () {
 		const document3 = await vscode.workspace.openTextDocument(uri3);
 		const docEditor3 = await vscode.window.showTextDocument(document3);
 		sourceCodeArray3 = docEditor3.document.getText().split("\n");
+
+		const uri4 = vscode.Uri.file(
+			path.join(__dirname + testFolderLocation + 'TestDoc4.cs')
+		);
+		const document4 = await vscode.workspace.openTextDocument(uri4);
+		const docEditor4 = await vscode.window.showTextDocument(document4);
+		sourceCodeArray4 = docEditor4.document.getText().split("\n");
 	})
 
 	test('should perform no decorations when there are no docs', function () {
@@ -86,7 +80,7 @@ describe('C# prettier docs', function () {
 
 	test('should perform no decoration when cursor is within the docs line', function () {
 		const decoratorOptions = [];
-		decorateSourceCode(sourceCodeArray1, decoratorOptions, 9);
+		decorateSourceCode(sourceCodeArray1, decoratorOptions, 9); // 9 is the cursor line
 
 		assert.strictEqual(decoratorOptions.length, 0);
 	})
@@ -96,6 +90,13 @@ describe('C# prettier docs', function () {
 		decorateSourceCode(sourceCodeArray3, decoratorOptions, null);
 
 		assert.strictEqual(decoratorOptions.length, 1);
+	})
+
+	test('should perform decorations for any tag', () => {
+		const decoratorOptions = [];
+		decorateSourceCode(sourceCodeArray4, decoratorOptions, null);
+
+		assert.strictEqual(decoratorOptions.length, 2);
 	})
 
 	test('should configure the correct background color', function () {
