@@ -165,6 +165,8 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 	const paramReg = /(< *param)/
 	// For return tag
 	const returnReg = /(< *returns)/
+	// For other tags
+	const otherReg = /(< *.* *>)/
 
 	// String for the comment xml
 	let docXml = "";
@@ -196,14 +198,16 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 			// Store index of tag lines
 			if (currentLine.match(summaryReg))
 				summaryIndex = line;
-			else if (currentLine.match(summaryEndReg))
+
+			if (currentLine.match(summaryEndReg))
 				summaryEndIndex = line;
-			else if (currentLine.match(paramReg))
+
+			if (currentLine.match(paramReg))
 				paramIndexes.push(line)
 			else if (currentLine.match(returnReg))
 				returnIndex = line;
 
-			// If cursor is within line,  raise skipCurrent flag to skip the decoration
+			// If cursor is within line, raise skipCurrent flag to skip the decoration
 			if (cursorLine && cursorLine === line) skipCurrent = true;
 
 		} else if (docXml !== "") {
@@ -222,9 +226,9 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				const returnElements = document.getElementsByTagName("returns")
 
 				if (summaryIndex !== -1 && summaryElements[0]) {
-					console.log("Text: " + summaryElements[0].textContent)
 					const summaryLines = summaryElements[0].textContent.trim().split("\n");
 
+					/// STRING EDITING
 					// Apply line markers to all
 					for (let i = 0; i < summaryLines.length; i++) {
 						summaryLines[i] = configSummary.get("markers.linePrefix") + summaryLines[i] + configSummary.get("markers.lineSuffix");
@@ -235,20 +239,33 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 						summaryLines.splice(0, 0, configGeneral.get("markers.blockPrefix"))
 					}
 
-					// Clear the lines until the first lines
-					for (let i = 0; i < summaryEndIndex - summaryIndex - summaryLines.length + 1; i++) {
-						decorationsArray.push(getRangeOptions(summaryIndex + i, 0, summaryIndex + i + 1, 0));
+					/// DECORATIONS
+
+					// For one line summaries
+					if (summaryIndex === summaryEndIndex) {
+						decorationsArray.push(...applyDecoToElement("summary", summaryLines, {
+							prefix: "",
+							linePrefix: "",
+							lineSuffix: ""
+						}, summaryIndex, indent))
+					} else {
+						// Clear the lines until the first lines
+						for (let i = 0; i < summaryEndIndex - summaryIndex - summaryLines.length + 1; i++) {
+							decorationsArray.push(getRangeOptions(summaryIndex + i, 0, summaryIndex + i + 1, 0));
+						}
+
+						// Add decorator for each line of summary
+						for (let i = 0; i < summaryLines.length; i++) {
+							decorationsArray.push(
+								getDecorator(summaryLines[i],
+									// Starting from the end, go back 'length' amounts of line
+									getRange(summaryEndIndex - summaryLines.length + 1 + i, indent,
+										summaryEndIndex + 1 - summaryLines.length + 1 + i, 0), "summary")
+							)
+						}
 					}
 
-					// Add decorator for each line of summary
-					for (let i = 0; i < summaryLines.length; i++) {
-						decorationsArray.push(
-							getDecorator(summaryLines[i],
-								// Starting from the end, go back 'length' amounts of line
-								getRange(summaryEndIndex - summaryLines.length + 1 + i, indent,
-									summaryEndIndex + 1 - summaryLines.length + 1 + i, 0), "summary")
-						)
-					}
+
 				}
 
 				const paramPrefix = configParam.get("markers.linePrefix");
@@ -264,28 +281,23 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					if (!paramElement) return;
 
-					const paramName = configParam.get("markers.namePrefix") + paramElement.getAttribute("name") + configParam.get("markers.nameSuffix");
+					const addedDeco = applyDecoToNamedElement(
+						"param",
+						paramElement.getAttribute("name"),
+						paramElement.textContent.split("\n"),
+						{
+							prefix: paramPrefix,
+							suffix: paramSuffix,
+							namePrefix: configParam.get("markers.namePrefix"),
+							nameSuffix: configParam.get("markers.nameSuffix"),
+							textPrefix: paramTextPrefix,
+							textSuffix: paramTextSuffix,
+							delimiter: delimiter
+						},
+						l,
+						indent)
 
-					const paramTextLines = paramElement.textContent.split("\n")
-
-					// When there is no param description
-					if (paramTextLines.length === 0) {
-						decorationsArray.push(getDecorator(paramPrefix + paramName + paramSuffix, getRange(l, indent, l + 1, 0), "param"))
-						return;
-					}
-
-					paramTextLines[0] = paramPrefix + paramName + delimiter + paramTextPrefix + paramTextLines[0];
-					paramTextLines[paramTextLines.length - 1] += paramTextSuffix;
-
-					for (let i = 1; i < paramTextLines.length; i++) {
-						paramTextLines[i] = paramPrefix + " " + paramTextLines[i];
-					}
-
-					for (let i = 0; i < paramTextLines.length; i++) {
-						decorationsArray.push(getDecorator(paramTextLines[i],
-							getRange(l + i, indent,
-								l + 1 + i, 0), "param"))
-					}
+					decorationsArray.push(...addedDeco)
 				})
 
 				const returnLinePrefix = configReturns.get("markers.linePrefix");
@@ -296,18 +308,11 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 				if (returnIndex !== -1 && returnElements[0]) {
 					const returnLines = returnElements[0].textContent.split("\n")
 
-					returnLines[0] = returnPrefix + returnLines[0]
-
-					for (let i = 0; i < returnLines.length; i++) {
-						returnLines[i] = returnLinePrefix + returnLines[i] + returnLineSuffix;
-					}
-
-					for (let i = 0; i < returnLines.length; i++) {
-						decorationsArray.push(getDecorator(returnLines[i],
-							getRange(returnIndex + i, indent,
-								returnIndex + 1 + i, 0), "returns"))
-					}
-
+					decorationsArray.push(...applyDecoToElement("returns", returnLines, {
+						prefix: returnPrefix,
+						linePrefix: returnLinePrefix,
+						lineSuffix: returnLineSuffix
+					}, returnIndex, indent))
 				}
 			} catch (err) {
 				console.log("Parse error: ")
@@ -323,6 +328,80 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 			skipCurrent = false;
 		}
 	}
+}
+
+/**
+ * 
+ * @param {string} tag
+ * @param {string[]} valueLines
+ * @param {string} markers.prefix
+ * @param {string} markers.linePrefix
+ * @param {string} markers.lineSuffix
+ * @param {number} line 
+ * @param {number} indent 
+ * @returns {vscode.workspace.DecorationOptions[]}
+ */
+function applyDecoToElement(tag, valueLines, markers, line, indent) {
+	const decorationsArray = []
+
+	valueLines[0] = markers.prefix + valueLines[0]
+
+	for (let i = 0; i < valueLines.length; i++) {
+		valueLines[i] = markers.linePrefix + valueLines[i] + markers.lineSuffix;
+	}
+
+	for (let i = 0; i < valueLines.length; i++) {
+		decorationsArray.push(getDecorator(valueLines[i],
+			getRange(line + i, indent,
+				line + 1 + i, 0), tag))
+	}
+
+	return decorationsArray;
+}
+
+
+
+/**
+ * 
+ * @param {string} tag
+ * @param {string} name
+ * @param {string[]} valueLines
+ * @param {string} markers.prefix
+ * @param {string} markers.suffix
+ * @param {string} markers.namePrefix
+ * @param {string} markers.nameSuffix
+ * @param {string} markers.delimiter
+ * @param {string} markers.textPrefix
+ * @param {string} markers.textSuffix
+ * @param {number} line 
+ * @param {number} indent 
+ * @returns {vscode.workspace.DecorationOptions[]}
+ */
+function applyDecoToNamedElement(tag, name, valueLines, markers, line, indent) {
+	const decorationsArray = []
+
+	const nameAttr = markers.namePrefix + name + markers.nameSuffix;
+
+	// When there is no param description
+	if (valueLines.length === 0) {
+		decorationsArray.push(getDecorator(markers.prefix + nameAttr + markers.suffix, getRange(line, indent, line + 1, 0), tag))
+		return;
+	}
+
+	valueLines[0] = markers.prefix + nameAttr + markers.delimiter + markers.textPrefix + valueLines[0];
+	valueLines[valueLines.length - 1] += markers.textSuffix;
+
+	for (let i = 1; i < valueLines.length; i++) {
+		valueLines[i] = markers.prefix + " " + valueLines[i];
+	}
+
+	for (let i = 0; i < valueLines.length; i++) {
+		decorationsArray.push(getDecorator(valueLines[i],
+			getRange(line + i, indent,
+				line + 1 + i, 0), tag))
+	}
+
+	return decorationsArray;
 }
 
 /**

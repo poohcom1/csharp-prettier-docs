@@ -26,6 +26,7 @@ let docEditor2;
 
 let sourceCodeArray1;
 let sourceCodeArray2;
+let sourceCodeArray3;
 
 const doc1SummaryIndex = 2; // First summary line with decorators
 const doc1ParamIndex = 3;
@@ -47,6 +48,13 @@ describe('C# prettier docs', function () {
 		const document2 = await vscode.workspace.openTextDocument(uri2);
 		docEditor2 = await vscode.window.showTextDocument(document2);
 		sourceCodeArray2 = docEditor2.document.getText().split("\n");
+
+		const uri3 = vscode.Uri.file(
+			path.join(__dirname + testFolderLocation + 'TestDoc3.cs')
+		);
+		const document3 = await vscode.workspace.openTextDocument(uri3);
+		const docEditor3 = await vscode.window.showTextDocument(document3);
+		sourceCodeArray3 = docEditor3.document.getText().split("\n");
 	})
 
 	test('should perform no decorations when there are no docs', function () {
@@ -67,6 +75,7 @@ describe('C# prettier docs', function () {
 		assert.strictEqual(decoratorOptions.length, 6);
 	})
 
+
 	test('should perform 1 decoration per line of xml doc with multiline comments', function () {
 		const decoratorOptions = [];
 		decorateSourceCode(sourceCodeArray2, decoratorOptions, null);
@@ -80,6 +89,13 @@ describe('C# prettier docs', function () {
 		decorateSourceCode(sourceCodeArray1, decoratorOptions, 9);
 
 		assert.strictEqual(decoratorOptions.length, 0);
+	})
+
+	test('should perform decorations for one line summary docs', () => {
+		const decoratorOptions = [];
+		decorateSourceCode(sourceCodeArray3, decoratorOptions, null);
+
+		assert.strictEqual(decoratorOptions.length, 1);
 	})
 
 	test('should configure the correct background color', function () {
