@@ -255,6 +255,11 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 
 					/// DECORATIONS
 
+					// Apply line markers to all
+					for (let i = 0; i < summaryLines.length; i++) {
+						summaryLines[i] = linePrefix + tag + summaryLines[i] + lineSuffix;
+					}
+
 					// For one line summaries
 					if (summaryIndex === summaryEndIndex) {
 						decorationsArray.push(...applyDecoToElement("summary", summaryLines, {
@@ -263,10 +268,6 @@ function decorateSourceCode(sourceCodeArr, decorationsArray, cursorLine = null) 
 							lineSuffix: ""
 						}, summaryIndex, indent))
 					} else {
-						// Apply line markers to all
-						for (let i = 0; i < summaryLines.length; i++) {
-							summaryLines[i] = linePrefix + tag + summaryLines[i] + lineSuffix;
-						}
 
 						// Apply block marker if exists
 						if (blockPrefix !== "") {

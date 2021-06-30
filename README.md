@@ -22,8 +22,9 @@ A Visual Studio Code extension that makes your C# XML docs look just a tad bit n
 
 ```
   "csharp-prettier-docs.general.opacity": 0.2,
+  "csharp-prettier-docs.general.markers.blockPrefix": "/*",
   "csharp-prettier-docs.summary.style.fontWeight": 500,
-  "csharp-prettier-docs.summary.markers.linePrefix": "/* ",
+  "csharp-prettier-docs.summary.markers.linePrefix": " * ",
   "csharp-prettier-docs.summary.markers.lineSuffix": "",
   "csharp-prettier-docs.param.markers.linePrefix": " * ",
   "csharp-prettier-docs.param.markers.namePrefix": "@param {",
