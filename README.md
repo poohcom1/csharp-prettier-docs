@@ -77,20 +77,20 @@ Preset contributions are more than welcome!
 <blockPrefix>
 
 Summary:
-<linePrefix><tag>#Description<lineSuffix>\n
-<linePrefix>#Description<lineSuffix>\n
+<linePrefix><tag>Description<lineSuffix>\n
+<linePrefix>...Description<lineSuffix>\n
 
 Param:
-<linePrefix><namePrefix>#name<nameSuffix><delimiter><textPrefix>#Description<lineSuffix>\n
-<linePrefix>#Description<textSuffix><lineSuffix>\n
+<linePrefix><namePrefix>name<nameSuffix><delimiter><textPrefix>Description<lineSuffix>\n
+<linePrefix>...Description<textSuffix><lineSuffix>\n
 
 Returns:
 <linePrefix><tag>Description<lineSuffix>\n
-<linePrefix>Description cont.<lineSuffix>\n
+<linePrefix>...Description<lineSuffix>\n
 
 Other tags:
-<linePrefix>#marker-name<namePrefix?>#name?<nameSuffix?><delimiter><textPrefix?>#Description<lineSuffix>\n
-<linePrefix>#Description <textSuffix?><lineSuffix>\n
+<linePrefix>marker-name<namePrefix?>name?<nameSuffix?><delimiter><textPrefix?>Description<lineSuffix>\n
+<linePrefix>...Description<textSuffix?><lineSuffix>\n
 <!-- Markers with ? are only applied if the tag has a name attribute -->
 ```
 
