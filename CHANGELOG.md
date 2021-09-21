@@ -11,7 +11,7 @@
 ### Added
 
 - Support for most types of tags
-- Suuport for single-line summary docs
+- Support for single-line summary docs
 
 ## 1.4.1
 
